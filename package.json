@@ -1,0 +1,14 @@
+{
+  "name": "sparql-access-point",
+  "version": "1.0.0",
+  "description": "SPARQL query interface for TALOS semantic web data",
+  "main": "index.html",
+  "scripts": {
+    "dev": "live-server .",
+    "build": "echo 'No build process needed'"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  }
+}

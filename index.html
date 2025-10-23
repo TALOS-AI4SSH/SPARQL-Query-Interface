@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TALOS SPARQL Query Interface</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="header-left">
+                <h1><i class="fas fa-database"></i> TALOS SPARQL Query Interface</h1>
+            </div>
+            <div class="header-right">
+                <div class="company-logo">
+                    <a href="https://talos-ai4ssh.uoc.gr/" target="_blank" rel="noopener noreferrer">
+                        <img src="images/talos_logo.png" alt="Company Logo" class="logo-image">
+                        <span class="company-name">TALOS AI4SSH</span>
+                    </a>
+                </div>
+                <div class="header-actions">
+                    <button id="themeToggle" class="btn-secondary">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <!-- Query Input Section -->
+            <section class="query-section">
+                <div class="section-header">
+                    <h2>Query Editor</h2>
+                    <div class="query-actions">
+                        <button id="formatQuery" class="btn-secondary">
+                            <i class="fas fa-indent"></i> Format
+                        </button>
+                        <button id="clearQuery" class="btn-secondary">
+                            <i class="fas fa-broom"></i> Clear
+                        </button>
+                        <button id="runQuery" class="btn-primary">
+                            <i class="fas fa-play"></i> Execute Query
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="query-input-container">
+                    <textarea id="queryEditor" placeholder="Enter your SPARQL query here...">
+PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+
+SELECT ?subject ?predicate ?object
+WHERE {
+  ?subject ?predicate ?object .
+}
+LIMIT 100
+                    </textarea>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section class="results-section">
+                <div class="section-header">
+                    <h2>Query Results</h2>
+                    <div class="results-actions">
+                        <button id="exportCSV" class="btn-secondary" disabled>
+                            <i class="fas fa-download"></i> CSV
+                        </button>
+                        <button id="exportJSON" class="btn-secondary" disabled>
+                            <i class="fas fa-download"></i> JSON
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="results-container">
+                    <div id="resultsPlaceholder" class="results-placeholder">
+                        <i class="fas fa-search"></i>
+                        <p>Execute a query to see results</p>
+                    </div>
+                    <div id="resultsTable" class="results-table hidden"></div>
+                    <div id="errorMessage" class="error-message hidden"></div>
+                    <div id="loadingSpinner" class="loading-spinner hidden">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Executing query...</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Endpoint Configuration Modal -->
+        <div id="configModal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>SPARQL Endpoint Configuration</h3>
+                    <button id="closeModal" class="btn-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="endpointUrl">Endpoint URL:</label>
+                        <input type="text" id="endpointUrl" 
+                               value="https://triplestore.talos-ai4ssh.uoc.gr/sparql/" 
+                               class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="defaultGraph">Default Graph URI (optional):</label>
+                        <input type="text" id="defaultGraph" 
+                               class="form-control">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="saveConfig" class="btn-primary">Save Configuration</button>
+                    <button id="cancelConfig" class="btn-secondary">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/sparql-client.js"></script>
+    <script src="js/ui-components.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
