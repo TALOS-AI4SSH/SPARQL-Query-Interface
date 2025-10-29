@@ -40,6 +40,11 @@ class SPARQLClient {
         this.endpoint = url;
     }
 
+    async queryWithPagination(sparqlQuery, limit = 10000, offset = 0) {
+        const paginatedQuery = `${sparqlQuery} LIMIT ${limit} OFFSET ${offset}`;
+        return await this.query(paginatedQuery);
+    }
+
     setDefaultGraph(uri) {
         this.defaultGraph = uri;
     }

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TALOS SPARQL Query Interface</title>
+    <title>TALOS SPARQL Query Endpoint</title>
     <link rel="stylesheet" href="css/style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
@@ -11,7 +11,7 @@
     <div class="app-container">
         <header class="app-header">
             <div class="header-left">
-                <h1><i class="fas fa-database"></i> TALOS SPARQL Query Interface</h1>
+                <h1><i class="fas fa-database"></i> TALOS SPARQL Query Endpoint</h1>
             </div>
             <div class="header-right">
                 <div class="company-logo">
@@ -29,11 +29,46 @@
         </header>
 
         <div class="main-content">
+            <section class="dataset-section">
+                <div class="section-header">
+                    <h2>Dataset & Examples</h2>
+                </div>
+                <div class="dataset-controls">
+                    <div class="dataset-selector">
+                        <label for="datasetSelect">Select Dataset:</label>
+                        <select id="datasetSelect" class="form-control">
+                            <option value="">-- Choose a dataset --</option>
+                            <!-- Options will be populated by JavaScript -->
+                        </select>
+                        <button id="loadDataset" class="btn-primary" disabled>
+                            <i class="fas fa-database"></i> Load Dataset
+                        </button>
+                    </div>
+                    
+                    <div class="examples-selector hidden">
+                        <label for="exampleSelect">Example Queries:</label>
+                        <select id="exampleSelect" class="form-control" disabled>
+                            <option value="">-- Select an example query --</option>
+                            <!-- Options will be populated based on selected dataset -->
+                        </select>
+                        <button id="loadExample" class="btn-secondary" disabled>
+                            <i class="fas fa-play-circle"></i> Load Example
+                        </button>
+                    </div>
+                    
+                    <div class="dataset-info">
+                        <div id="datasetDescription" class="dataset-description"></div>
+                    </div>
+                </div>
+            </section>
             <!-- Query Input Section -->
             <section class="query-section">
                 <div class="section-header">
                     <h2>Query Editor</h2>
                     <div class="query-actions">
+                        <button id="prefixesBtn" class="btn-secondary">
+                            <i class="fas fa-code"></i> Prefixes
+                        </button>
                         <button id="formatQuery" class="btn-secondary">
                             <i class="fas fa-indent"></i> Format
                         </button>
@@ -61,32 +96,54 @@ LIMIT 100
             </section>
 
             <!-- Results Section -->
-            <section class="results-section">
-                <div class="section-header">
-                    <h2>Query Results</h2>
-                    <div class="results-actions">
-                        <button id="exportCSV" class="btn-secondary" disabled>
-                            <i class="fas fa-download"></i> CSV
-                        </button>
-                        <button id="exportJSON" class="btn-secondary" disabled>
-                            <i class="fas fa-download"></i> JSON
-                        </button>
+        <section class="results-section">
+            <div class="section-header">
+                <h2>Query Results</h2>
+                <div class="results-actions">
+                    <div class="results-controls">
+                        <div class="filter-control">
+                            <input type="text" id="resultsFilter" placeholder="Filter results..." class="form-control">
+                            <i class="fas fa-search filter-icon"></i>
+                        </div>
+                        <div class="pagination-control">
+                            <span class="pagination-info" id="paginationInfo">Showing 0-0 of 0</span>
+                            <button id="prevPage" class="btn-secondary" disabled>
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <button id="nextPage" class="btn-secondary" disabled>
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                            <select id="pageSize" class="form-control">
+                                <option value="50">50 per page</option>
+                                <option value="100" selected>100 per page</option>
+                                <option value="200">200 per page</option>
+                                <option value="500">500 per page</option>
+                            </select>
+                        </div>
                     </div>
+                    <!-- Existing export buttons -->
+                    <button id="exportCSV" class="btn-secondary" disabled>
+                        <i class="fas fa-download"></i> CSV
+                    </button>
+                    <button id="exportJSON" class="btn-secondary" disabled>
+                        <i class="fas fa-download"></i> JSON
+                    </button>
                 </div>
-                
-                <div class="results-container">
-                    <div id="resultsPlaceholder" class="results-placeholder">
-                        <i class="fas fa-search"></i>
-                        <p>Execute a query to see results</p>
-                    </div>
-                    <div id="resultsTable" class="results-table hidden"></div>
-                    <div id="errorMessage" class="error-message hidden"></div>
-                    <div id="loadingSpinner" class="loading-spinner hidden">
-                        <i class="fas fa-spinner fa-spin"></i>
-                        <p>Executing query...</p>
-                    </div>
+            </div>
+            
+            <div class="results-container">
+                <div id="resultsPlaceholder" class="results-placeholder">
+                    <i class="fas fa-search"></i>
+                    <p>Execute a query to see results</p>
                 </div>
-            </section>
+                <div id="resultsTable" class="results-table hidden"></div>
+                <div id="errorMessage" class="error-message hidden"></div>
+                <div id="loadingSpinner" class="loading-spinner hidden">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Executing query...</p>
+                </div>
+            </div>
+        </section>
         </div>
 
         <!-- Endpoint Configuration Modal -->

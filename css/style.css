@@ -5,7 +5,7 @@
 
     /* Accent & Warning: Richer, Golden Tones for highlights and alerts */
     --accent-color: #128458; /* A vibrant, deep gold/mustard yellow */
-    --success-color: #DAF7A6; /* A pale, cool green for contrast (easy to spot) */
+    --success-color: #030303; /* A pale, cool green for contrast (easy to spot) */
     
     /* Error: A noticeable, deep red */
     --warning-color: #FF5733; /* A bright, but still dark, orange-red */
@@ -416,6 +416,252 @@ tr:hover {
 
 .hidden {
     display: none !important;
+}
+
+/* Ensure consistent button styling */
+.btn-primary, .btn-secondary {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+}
+
+/* Responsive adjustments for more buttons */
+@media (max-width: 768px) {
+    .query-actions {
+        flex-wrap: wrap;
+    }
+    
+    .btn-primary, .btn-secondary {
+        flex: 1;
+        min-width: 120px;
+        justify-content: center;
+    }
+}
+
+/* Prefixes Modal Styles */
+.prefixes-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.prefix-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.prefix-checkbox:hover {
+    background-color: rgba(52, 152, 219, 0.1);
+}
+
+.prefix-checkbox input[type="checkbox"] {
+    margin: 0;
+}
+
+.prefix-name {
+    font-weight: bold;
+    min-width: 60px;
+    color: var(--accent-color);
+}
+
+.prefix-uri {
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    color: var(--text-color);
+    opacity: 0.8;
+    word-break: break-all;
+}
+
+/* Responsive design for prefixes modal */
+@media (max-width: 768px) {
+    .prefix-checkbox {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+    
+    .prefix-name {
+        min-width: auto;
+    }
+}
+
+/* Dataset Section Styles */
+.dataset-section {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+}
+
+[data-theme="dark"] .dataset-section {
+    background: var(--secondary-color);
+}
+
+.dataset-controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    align-items: start;
+}
+
+.dataset-selector, .examples-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.dataset-selector .btn-primary, .examples-selector .btn-secondary {
+    align-self: flex-start;
+}
+
+.dataset-info {
+    grid-column: 1 / -1;
+}
+
+.dataset-description {
+    padding: 15px;
+    background: rgba(52, 152, 219, 0.1);
+    border-radius: 4px;
+    border-left: 4px solid var(--accent-color);
+}
+
+.dataset-description h4 {
+    margin-bottom: 8px;
+    color: var(--primary-color);
+}
+
+.dataset-description p {
+    margin-bottom: 5px;
+    line-height: 1.5;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .dataset-controls {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .dataset-selector, .examples-selector {
+        flex-direction: row;
+        align-items: end;
+        flex-wrap: wrap;
+    }
+    
+    .dataset-selector label, .examples-selector label {
+        width: 100%;
+    }
+    
+    .dataset-selector select, .examples-selector select {
+        flex: 1;
+        min-width: 150px;
+    }
+}
+.success-message {
+    color: var(--success-color);
+    font-weight: bold;
+    margin-top: 10px;
+    padding: 5px;
+    background: rgba(46, 204, 113, 0.1);
+    border-radius: 4px;
+}
+
+/* Results Controls Styles */
+.results-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.filter-control {
+    position: relative;
+    min-width: 200px;
+}
+
+.filter-control input {
+    padding-left: 35px;
+}
+
+.filter-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--secondary-color);
+}
+
+.pagination-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pagination-info {
+    font-size: 14px;
+    color: var(--text-color);
+    margin-right: 5px;
+    white-space: nowrap;
+}
+
+#pageSize {
+    width: auto;
+    min-width: 120px;
+}
+
+/* Responsive design for results controls */
+@media (max-width: 768px) {
+    .results-controls {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+    
+    .filter-control {
+        min-width: auto;
+    }
+    
+    .pagination-control {
+        justify-content: space-between;
+    }
+    
+    .pagination-info {
+        flex: 1;
+        text-align: center;
+    }
+}
+
+/* Highlight filtered text */
+.highlight {
+    background-color: var(--accent-color);
+    color: white;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+/* No results message */
+.no-results {
+    text-align: center;
+    padding: 40px;
+    color: var(--secondary-color);
+    font-style: italic;
 }
 
 /* Responsive Design */
