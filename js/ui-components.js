@@ -24,15 +24,13 @@ class UIComponents {
         // Query execution
         document.getElementById('runQuery').addEventListener('click', () => this.executeQuery());
         
-        // Query formatting
-        document.getElementById('formatQuery').addEventListener('click', () => this.formatQuery());
-        
         // Query clearing
         document.getElementById('clearQuery').addEventListener('click', () => this.clearQuery());
         
         // Export buttons
         document.getElementById('exportCSV').addEventListener('click', () => this.exportResults('csv'));
         document.getElementById('exportJSON').addEventListener('click', () => this.exportResults('json'));
+		document.getElementById('exportRDF').addEventListener('click', () => this.exportResults('rdf'));
         
         // Theme toggle
         document.getElementById('themeToggle').addEventListener('click', () => this.toggleTheme());
@@ -63,10 +61,14 @@ class UIComponents {
             'rdfs': 'http://www.w3.org/2000/01/rdf-schema#',
             'xsd': 'http://www.w3.org/2001/XMLSchema#',
             'owl': 'http://www.w3.org/2002/07/owl#',
-            'skos': 'http://www.w3.org/2004/02/skos/core#',
             'dc': 'http://purl.org/dc/elements/1.1/',
-            'dct': 'http://purl.org/dc/terms/',
             'foaf': 'http://xmlns.com/foaf/0.1/',
+            'otv': 'http://www.ontologia.fr/OTB/otv#',
+            'otb': 'http://www.ontologia.fr/OTB/',
+            'ontolex': 'http://www.w3.org/ns/lemon/ontolex#',
+
+            'skos': 'http://www.w3.org/2004/02/skos/core#',
+            'dct': 'http://purl.org/dc/terms/',
             'schema': 'http://schema.org/',
             'geo': 'http://www.opengis.net/ont/geosparql#',
             'wgs': 'http://www.w3.org/2003/01/geo/wgs84_pos#'
@@ -276,88 +278,128 @@ LIMIT 30`
             'dataset5': {
                 name: 'Ancient Greek and Chinese Philosophers Ontology (v1.0)',
                 description: 'Version 1.0 of an ontoterminology that models Ancient Greek philosophers, their philosophical production, and their spatial and temporal positioning.',
-                graphUri: 'http://talos-ai4ssh.uoc.gr/graph/dataset5',
-                endpoint: 'https://triplestore.talos-ai4ssh.uoc.gr/sparql/',
+                graphUri: 'https://triplestore.talos-ai4ssh.uoc.gr:8890/OpenDatasets/Philosophers_v1.rdf',
+                endpoint: 'https://triplestore.talos-ai4ssh.uoc.gr/sparql',
                 examples: {
-                    'events_timeline': {
-                        name: 'Events Timeline',
-                        query: `PREFIX schema: <http://schema.org/>
-PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+                    'query1': {
+                        name: 'Which ancient Greek philosophers were born or stayed in Athens?',
+                        query: `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX ont: <http://www.ontologia.fr/OTB/Philosophers#>
+PREFIX otv: <http://www.ontologia.fr/OTB/otv#>
 
-SELECT ?event ?name ?startDate ?location
-WHERE {
-  ?event schema:name ?name ;
-         schema:startDate ?startDate .
-  OPTIONAL { ?event schema:location ?location }
-}
-ORDER BY ?startDate
-LIMIT 30`
-                    }
-                }
-            },
-            'dataset6': {
-                name: 'OYXOY: Collection of Datasets on Greek NLU (v1.0)',
-                description: 'A collection of datasets for Greek Natural Language Understanding (NLU).',
-                graphUri: 'http://talos-ai4ssh.uoc.gr/graph/dataset6',
-                endpoint: 'https://triplestore.talos-ai4ssh.uoc.gr/sparql/',
-                examples: {
-                    'events_timeline': {
-                        name: 'Events Timeline',
-                        query: `PREFIX schema: <http://schema.org/>
-PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+SELECT ?name ?school ?century
+FROM <https://triplestore.talos-ai4ssh.uoc.gr:8890/OpenDatasets/Philosophers_v1.rdf>
 
-SELECT ?event ?name ?startDate ?location
 WHERE {
-  ?event schema:name ?name ;
-         schema:startDate ?startDate .
-  OPTIONAL { ?event schema:location ?location }
-}
-ORDER BY ?startDate
-LIMIT 30`
-                    }
-                }
-            },
-            'dataset7': {
-                name: 'Greek Dialect Corpus (v1.0)',
-                description: 'A collection of raw text from various Greek dialects, designed to support research in Greek linguistics, NLP, and dialectology.',
-                graphUri: 'http://talos-ai4ssh.uoc.gr/graph/dataset7',
-                endpoint: 'https://triplestore.talos-ai4ssh.uoc.gr/sparql/',
-                examples: {
-                    'events_timeline': {
-                        name: 'Events Timeline',
-                        query: `PREFIX schema: <http://schema.org/>
-PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+  {?x otv:instanceOf ont:Ancient-Greek-Philosopher;
+         ont:birthPlace ont:athens;
+          rdfs:label ?name;
+          ont:centuryOfLiving ?t.
+    ?t rdfs:label ?century }
+  UNION
+  {?x otv:instanceOf ont:Ancient-Greek-Philosopher;
+        ont:stayedIn ont:athens;
+        rdfs:label ?name;
+        ont:centuryOfLiving ?t.
+    ?t rdfs:label ?century }
+  OPTIONAL 
+{?x ont:memberOfPhilosophicalSchool ?y.
+    ?y rdfs:label ?school.
+  FILTER (lang(?school) = "en") }
+  FILTER (lang(?name) = "en") }
+ORDER BY ASC(?name)`
+                    },
+                    'query2': {
+                        name: 'Who were the Ancient Greek Pythagoreans from Tarentum, in which century did they live, and were they referenced in any philosophical works?',
+                        query: `PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX ont: <http://www.ontologia.fr/OTB/Philosophers#>
+PREFIX otv: <http://www.ontologia.fr/OTB/otv#>
 
-SELECT ?event ?name ?startDate ?location
-WHERE {
-  ?event schema:name ?name ;
-         schema:startDate ?startDate .
-  OPTIONAL { ?event schema:location ?location }
-}
-ORDER BY ?startDate
-LIMIT 30`
-                    }
-                }
-            },
-            'dataset8': {
-                name: 'Modern Greek Literature Dataset (v1.0)',
-                description: 'A collection of raw text data from interwar poets and prose writers, including prose and poetry categorized by date, author, and collection.',
-                graphUri: 'http://talos-ai4ssh.uoc.gr/graph/dataset8',
-                endpoint: 'https://triplestore.talos-ai4ssh.uoc.gr/sparql/',
-                examples: {
-                    'events_timeline': {
-                        name: 'Events Timeline',
-                        query: `PREFIX schema: <http://schema.org/>
-PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+SELECT ?name ?century ?mentionedByPhilosophicalWork
+FROM <http://ontologia.fr/OTB/Philosophers.rdf>
 
-SELECT ?event ?name ?startDate ?location
 WHERE {
-  ?event schema:name ?name ;
-         schema:startDate ?startDate .
-  OPTIONAL { ?event schema:location ?location }
+  ?x otv:instanceOf ont:Ancient-Greek-Philosopher;
+     ont:memberOfPhilosophicalSchool ont:pythagorean_school;
+     ont:birthPlace ont:tarentum;
+     rdfs:label ?name;
+     ont:centuryOfLiving ?t.
+  ?t rdfs:label ?century.
+  
+  OPTIONAL {
+    ?x ont:mentionedBy ?y.
+    ?y rdfs:label ?mentionedByPhilosophicalWork.
+    FILTER (lang(?mentionedByPhilosophicalWork) = "en")
+  }
+  FILTER (lang(?name) = "en")
 }
-ORDER BY ?startDate
-LIMIT 30`
+ORDER BY ?name`
+                    },
+                    'query3': {
+                        name: 'Which are Aristotle\'s philosophical works and what related resources are associated with them in the current ontoterminology?',
+                        query: `PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX ont: <http://www.ontologia.fr/OTB/Philosophers#>
+PREFIX otv: <http://www.ontologia.fr/OTB/otv#>
+
+SELECT ?OfPhilosophicalWork ?resources
+FROM <http://ontologia.fr/OTB/Philosophers.rdf>
+
+WHERE {
+  ont:aristotle ont:authorOf ?y.
+  ?y rdfs:seeAlso ?resources;
+     otv:denotedByProperName ?x.
+  ?x otv:properName ?OfPhilosophicalWork.
+  FILTER (CONTAINS(STR(?x), "_en"))
+}
+ORDER BY ?OfPhilosophicalWork`
+                    },
+                    'query4': {
+                        name: 'Which of Plato\'s philosophical dialogues mention Hippias of Elis, and which other philosophers are referenced in those dialogues?',
+                        query: `PREFIX ont: <http://www.ontologia.fr/OTB/Philosophers#>
+PREFIX otv: <http://www.ontologia.fr/OTB/otv#>
+
+SELECT ?PhilosophicalWork ?nameOfPhilosopher
+FROM <http://ontologia.fr/OTB/Philosophers.rdf>
+
+WHERE {
+  ont:plato ont:authorOf ?y.
+  ?y ont:mentions ont:hippias_of_elis;
+     ont:mentions ?x.
+  ?y otv:denotedByProperName ?titleOfWork.
+  ?titleOfWork otv:properName ?PhilosophicalWork.
+  ?x otv:denotedByProperName ?name.
+  ?name otv:properName ?nameOfPhilosopher.
+  FILTER (CONTAINS(STR(?titleOfWork), "en"))
+  FILTER (CONTAINS(STR(?name), "en"))
+}
+ORDER BY ?OfPhilosophicalWork`
+                    },
+                    'query5': {
+                        name: 'Which philosophers have authored philosophical work “On Nature”?',
+                        query: `PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX ont: <http://www.ontologia.fr/OTB/Philosophers#>
+PREFIX otv: <http://www.ontologia.fr/OTB/otv#>
+
+SELECT ?name ?century ?mentionedByPhilosophicalWork
+FROM <http://ontologia.fr/OTB/Philosophers.rdf>
+
+WHERE {
+  ?x otv:instanceOf ont:Ancient-Greek-Philosopher;
+     ont:memberOfPhilosophicalSchool ont:pythagorean_school;
+     ont:birthPlace ont:tarentum;
+     rdfs:label ?name;
+     ont:centuryOfLiving ?t.
+  ?t rdfs:label ?century.
+  
+  OPTIONAL {
+    ?x ont:mentionedBy ?y.
+    ?y rdfs:label ?mentionedByPhilosophicalWork.
+    FILTER (lang(?mentionedByPhilosophicalWork) = "en")
+  }
+  FILTER (lang(?name) = "en")
+}
+ORDER BY ?name`
                     }
                 }
             },
@@ -527,7 +569,6 @@ LIMIT 30`
         const editor = document.getElementById('queryEditor');
         
         editor.value = example.query;
-        this.formatQuery();
     }
 
     // === PAGINATION AND FILTERING FUNCTIONALITY ===
@@ -734,14 +775,6 @@ LIMIT 30`
         this.enableExportButtons();
     }
 
-    formatQuery() {
-        const editor = document.getElementById('queryEditor');
-        if (!editor) return;
-        
-        const formatted = this.sparqlClient.formatQuery(editor.value);
-        editor.value = formatted;
-    }
-
     clearQuery() {
         if (confirm('Are you sure you want to clear the query?')) {
             const editor = document.getElementById('queryEditor');
@@ -750,43 +783,81 @@ LIMIT 30`
     }
 
     exportResults(format) {
-        if (!this.currentResults) return;
+		if (!this.currentResults) return;
 
-        let data, mimeType, extension;
-        
-        // Export filtered data if filter is active
-        const resultsToExport = this.filteredResults ? {
-            head: this.currentResults.head,
-            results: { bindings: this.filteredResults }
-        } : this.currentResults;
-        
-        if (format === 'csv') {
-            data = this.sparqlClient.exportToCSV(resultsToExport);
-            mimeType = 'text/csv';
-            extension = 'csv';
-        } else {
-            data = this.sparqlClient.exportToJSON(resultsToExport);
-            mimeType = 'application/json';
-            extension = 'json';
-        }
+	    // For RDF format, we need to execute the query again with RDF format
+  		if (format === 'rdf') {
+    	    this.exportRDFResults();
+        	return;
+ 	   }
 
-        const blob = new Blob([data], { type: mimeType });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
+ 		let data, mimeType, extension;
+    
+    // Export filtered data if filter is active
+    	const resultsToExport = this.filteredResults ? {
+       		head: this.currentResults.head,
+        	results: { bindings: this.filteredResults }
+    	} : this.currentResults;
+    
+    	if (format === 'csv') {
+        	data = this.sparqlClient.exportToCSV(resultsToExport);
+        	mimeType = 'text/csv';
+        	extension = 'csv';
+    	} else {
+        	data = this.sparqlClient.exportToJSON(resultsToExport);
+        	mimeType = 'application/json';
+        	extension = 'json';
+    	}
+
+    	this.downloadFile(data, mimeType, extension);
+	}
+
+	async exportRDFResults() {
+    	const query = document.getElementById('queryEditor').value.trim();
+    
+    	if (!query) {
+        	this.showError('No query to export as RDF');
+        	return;
+    	}
+
+    	this.showLoading();
+    
+    	try {
+        	const rdfData = await this.sparqlClient.exportToRDF(query);
         
-        // Include filter info in filename if filter is active
-        let filename = 'sparql-results';
-        if (this.filterText) {
-            filename += `-filtered-${this.filterText}`;
-        }
-        a.download = `${filename}.${extension}`;
+        	// Include filter info in filename if filter is active
+        	let filename = 'sparql-results';
+        	if (this.filterText) {
+            	filename += `-filtered-${this.filterText}`;
+        	}
         
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-    }
+        	this.downloadFile(rdfData, 'application/rdf+xml', 'rdf');
+    	} catch (error) {
+        	this.showError(`RDF export failed: ${error.message}`);
+    	} finally {
+        	this.hideLoading();
+    	}
+	}
+
+	// Helper method for file download
+	downloadFile(data, mimeType, extension) {
+    	const blob = new Blob([data], { type: mimeType });
+    	const url = URL.createObjectURL(blob);
+    	const a = document.createElement('a');
+    	a.href = url;
+    
+    	// Include filter info in filename if filter is active
+    	let filename = 'sparql-results';
+    	if (this.filterText) {
+        	filename += `-filtered-${this.filterText}`;
+    	}
+    	a.download = `${filename}.${extension}`;
+    
+    	document.body.appendChild(a);
+    	a.click();
+    	document.body.removeChild(a);
+    	URL.revokeObjectURL(url);
+	}
 
     // === UI STATE MANAGEMENT ===
     toggleTheme() {
@@ -835,8 +906,11 @@ LIMIT 30`
     enableExportButtons() {
         const csvBtn = document.getElementById('exportCSV');
         const jsonBtn = document.getElementById('exportJSON');
+        const rdfBtn = document.getElementById('exportRDF');
+
         if (csvBtn) csvBtn.disabled = false;
         if (jsonBtn) jsonBtn.disabled = false;
+        if (rdfBtn) rdfBtn.disabled = false;
     }
 
     // === UTILITY METHODS ===
@@ -844,11 +918,6 @@ LIMIT 30`
         if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
             e.preventDefault();
             this.executeQuery();
-        }
-        
-        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-            e.preventDefault();
-            this.formatQuery();
         }
     }
 

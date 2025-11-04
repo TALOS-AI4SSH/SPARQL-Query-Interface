@@ -20,7 +20,7 @@ class SPARQLClient {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
-                    'Accept': 'application/sparql-results+json'
+                    'Accept': this.getAcceptHeader(format)
                 },
                 body: new URLSearchParams(params)
             });
@@ -29,11 +29,26 @@ class SPARQLClient {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            return await response.json();
+            if (format === 'json') {
+                return await response.json();
+            } else {
+                return await response.text();
+            }
         } catch (error) {
             console.error('SPARQL query error:', error);
             throw error;
         }
+    }
+
+    getAcceptHeader(format) {
+        const acceptHeaders = {
+            'json': 'application/sparql-results+json',
+            'xml': 'application/sparql-results+xml',
+            'csv': 'text/csv',
+            'rdf': 'application/rdf+xml',
+            'turtle': 'text/turtle'
+        };
+        return acceptHeaders[format] || 'application/sparql-results+json';
     }
 
     setEndpoint(url) {
@@ -83,5 +98,51 @@ class SPARQLClient {
 
     exportToJSON(results) {
         return JSON.stringify(results, null, 2);
+    }
+
+    async exportToRDF(sparqlQuery) {
+        try {
+            // For RDF export, we need to use CONSTRUCT queries
+            // If it's a SELECT query, convert it to CONSTRUCT
+            let rdfQuery = sparqlQuery;
+            
+            if (sparqlQuery.trim().toUpperCase().startsWith('SELECT')) {
+                // Convert SELECT to CONSTRUCT to get RDF triples
+                rdfQuery = this.convertSelectToConstruct(sparqlQuery);
+            }
+            
+            // Execute query with RDF format
+            return await this.query(rdfQuery, 'rdf');
+        } catch (error) {
+            console.error('RDF export error:', error);
+            throw error;
+        }
+    }
+
+    // Helper method to convert SELECT to CONSTRUCT
+    convertSelectToConstruct(selectQuery) {
+        // Simple conversion - creates a CONSTRUCT with all triple patterns from WHERE
+        // This is a basic implementation and might need refinement for complex queries
+        const constructMatch = selectQuery.match(/SELECT\s+(.*?)\s+WHERE\s*\{/is);
+        if (constructMatch) {
+            const whereClauseMatch = selectQuery.match(/WHERE\s*\{(.*?)\}(?:\s*(?:ORDER BY|LIMIT|OFFSET|$))/is);
+            if (whereClauseMatch) {
+                const whereClause = whereClauseMatch[1];
+                return `CONSTRUCT { ${whereClause} } WHERE { ${whereClause} }`;
+            }
+        }
+        
+        // Fallback: return original query (might not work for RDF)
+        return selectQuery;
+    }
+
+    // Method to detect query type
+    getQueryType(query) {
+        const trimmed = query.trim().toUpperCase();
+        if (trimmed.startsWith('SELECT')) return 'SELECT';
+        if (trimmed.startsWith('CONSTRUCT')) return 'CONSTRUCT';
+        if (trimmed.startsWith('ASK')) return 'ASK';
+        if (trimmed.startsWith('DESCRIBE')) return 'DESCRIBE';
+        return 'UNKNOWN';
     }
 }
