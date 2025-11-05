@@ -686,3 +686,129 @@ tr:hover {
         margin: 20px;
     }
 }
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+.temp-message {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.success-message {
+    background: var(--success-color);
+}
+
+.info-message {
+    background: var(--accent-color);
+}
+
+.help-modal {
+    max-width: 700px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.help-modal .modal-body {
+    overflow-y: auto;
+    max-height: 60vh; /* This ensures the body is scrollable */
+    padding: 20px;
+}
+
+.help-content {
+    padding-right: 10px;
+}
+
+.help-section {
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.help-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.help-section h4 {
+    color: var(--accent-color);
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.help-section h4 i {
+    font-size: 0.9em;
+}
+
+.help-section ol, .help-section ul {
+    padding-left: 20px;
+    margin-bottom: 10px;
+}
+
+.help-section li {
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+.help-section strong {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.help-section kbd {
+    background-color: var(--secondary-color);
+    color: white;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: monospace;
+    font-size: 0.9em;
+    border: 1px solid var(--border-color);
+}
+
+.help-section p {
+    line-height: 1.6;
+    margin-bottom: 10px;
+}
+
+/* Scrollbar styling for help content */
+.help-modal .modal-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.help-modal .modal-body::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.1);
+    border-radius: 3px;
+}
+
+.help-modal .modal-body::-webkit-scrollbar-thumb {
+    background: var(--accent-color);
+    border-radius: 3px;
+}
+
+.help-modal .modal-body::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
+}

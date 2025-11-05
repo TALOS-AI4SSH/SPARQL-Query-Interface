@@ -52,6 +52,9 @@ class UIComponents {
 
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => this.handleKeyboardShortcuts(e));
+
+        // Help button
+        document.getElementById('helpBtn').addEventListener('click', () => this.showHelpModal());
     }
 
     // === PREFIXES FUNCTIONALITY ===
@@ -673,6 +676,15 @@ LIMIT 30`
             return;
         }
 
+        // Validate FROM clause against dataset graph URI if dataset is loaded
+        if (this.selectedDataset) {
+            const validationResult = this.validateFromClause(query, this.selectedDataset.graphUri);
+            if (!validationResult.isValid) {
+                this.showError(validationResult.message);
+                return;
+            }
+        }
+
         // Reset pagination and filtering
         this.currentPage = 1;
         this.filterText = '';
@@ -694,6 +706,90 @@ LIMIT 30`
             this.showError(`Query execution failed: ${error.message}`);
         } finally {
             this.hideLoading();
+        }
+    }
+
+    // === QUERY VALIDATION METHODS ===
+    validateFromClause(query, datasetGraphUri) {
+        // Check if query contains FROM clauses
+        const fromClauses = this.extractFromClauses(query);
+        
+        if (fromClauses.length === 0) {
+            // No FROM clauses - query will use the default graph
+            return { isValid: true };
+        }
+        
+        // Check if any FROM clause matches the dataset graph URI
+        const hasMatchingFromClause = fromClauses.some(fromUri => 
+            this.urisMatch(fromUri, datasetGraphUri)
+        );
+        
+        if (!hasMatchingFromClause) {
+            return {
+                isValid: false,
+                message: `Query FROM clause does not match the loaded dataset.\n\n` +
+                        `Loaded dataset URI: ${datasetGraphUri}\n` +
+                        `Query FROM clause(s): ${fromClauses.join(', ')}\n\n` +
+                        `Please update your query to use: FROM <${datasetGraphUri}> or remove the FROM clause to use the default dataset.`
+            };
+        }
+        
+        return { isValid: true };
+    }
+
+    extractFromClauses(query) {
+        // More robust FROM clause extraction that handles different formats
+        const fromRegex = /FROM\s+<([^>]+)>/gi;
+        const clauses = [];
+        let match;
+        
+        // Remove comments first to avoid matching commented FROM clauses
+        const queryWithoutComments = query.replace(/#[^\n]*\n?/g, '');
+        
+        while ((match = fromRegex.exec(queryWithoutComments)) !== null) {
+            clauses.push(match[1].trim());
+        }
+        
+        return clauses;
+    }
+
+    urisMatch(uri1, uri2) {
+        // Normalize URIs for comparison
+        const normalizeUri = (uri) => {
+            return uri
+                .replace(/\/+$/, '') // Remove trailing slashes
+                .toLowerCase()
+                .trim();
+        };
+        
+        const normalized1 = normalizeUri(uri1);
+        const normalized2 = normalizeUri(uri2);
+        
+        console.log('Comparing URIs:', { uri1: normalized1, uri2: normalized2 });
+        
+        // Check exact match
+        if (normalized1 === normalized2) {
+            return true;
+        }
+        
+        // Check if one URI is a parent directory of the other
+        if (normalized1.startsWith(normalized2) || normalized2.startsWith(normalized1)) {
+            return true;
+        }
+        
+        return false;
+    }
+
+    showError(message) {
+    const errorElement = document.getElementById('errorMessage');
+    if (errorElement) {
+        // Format the message with line breaks
+        const formattedMessage = message.replace(/\n/g, '<br>');
+        errorElement.innerHTML = formattedMessage;
+        errorElement.classList.remove('hidden');
+        
+        // Scroll to error message
+        errorElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
     }
 
@@ -955,5 +1051,35 @@ LIMIT 30`
         if (icon) {
             icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
         }
+    }
+    // Add the help modal method:
+    showHelpModal() {
+        const helpModal = document.getElementById('helpModal');
+        if (helpModal) {
+            helpModal.classList.remove('hidden');
+            this.bindHelpModalEvents();
+        }
+    }
+
+    bindHelpModalEvents() {
+        const helpModal = document.getElementById('helpModal');
+        const closeBtn = helpModal.querySelector('.btn-close');
+        const closeHelpBtn = helpModal.querySelector('.close-help');
+        
+        const closeModal = () => helpModal.classList.add('hidden');
+        
+        closeBtn.addEventListener('click', closeModal);
+        closeHelpBtn.addEventListener('click', closeModal);
+        
+        helpModal.addEventListener('click', (e) => {
+            if (e.target === helpModal) closeModal();
+        });
+        
+        // Close with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !helpModal.classList.contains('hidden')) {
+                closeModal();
+            }
+        });
     }
 }

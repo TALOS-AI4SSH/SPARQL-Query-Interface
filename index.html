@@ -21,6 +21,9 @@
                     </a>
                 </div>
                 <div class="header-actions">
+                    <button id="helpBtn" class="btn-secondary" title="Help & Instructions">
+                        <i class="fas fa-question-circle"></i> Help
+                    </button>
                     <button id="themeToggle" class="btn-secondary">
                         <i class="fas fa-moon"></i>
                     </button>
@@ -38,7 +41,6 @@
                         <label for="datasetSelect">Select Dataset:</label>
                         <select id="datasetSelect" class="form-control">
                             <option value="">-- Choose a dataset --</option>
-                            <!-- Options will be populated by JavaScript -->
                         </select>
                         <button id="loadDataset" class="btn-primary" disabled>
                             <i class="fas fa-database"></i> Load Dataset
@@ -49,7 +51,6 @@
                         <label for="exampleSelect">Example Queries:</label>
                         <select id="exampleSelect" class="form-control" disabled>
                             <option value="">-- Select an example query --</option>
-                            <!-- Options will be populated based on selected dataset -->
                         </select>
                         <button id="loadExample" class="btn-secondary" disabled>
                             <i class="fas fa-play-circle"></i> Load Example
@@ -61,7 +62,7 @@
                     </div>
                 </div>
             </section>
-            <!-- Query Input Section -->
+
             <section class="query-section">
                 <div class="section-header">
                     <h2>Query Editor</h2>
@@ -92,61 +93,126 @@ LIMIT 100
                 </div>
             </section>
 
-            <!-- Results Section -->
-        <section class="results-section">
-            <div class="section-header">
-                <h2>Query Results</h2>
-                <div class="results-actions">
-                    <div class="results-controls">
-                        <div class="filter-control">
-                            <input type="text" id="resultsFilter" placeholder="Filter results..." class="form-control">
-                            <i class="fas fa-search filter-icon"></i>
+            <section class="results-section">
+                <div class="section-header">
+                    <h2>Query Results</h2>
+                    <div class="results-actions">
+                        <div class="results-controls">
+                            <div class="filter-control">
+                                <input type="text" id="resultsFilter" placeholder="Filter results..." class="form-control">
+                                <i class="fas fa-search filter-icon"></i>
+                            </div>
+                            <div class="pagination-control">
+                                <span class="pagination-info" id="paginationInfo">Showing 0-0 of 0</span>
+                                <button id="prevPage" class="btn-secondary" disabled>
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <button id="nextPage" class="btn-secondary" disabled>
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                                <select id="pageSize" class="form-control">
+                                    <option value="50">50 per page</option>
+                                    <option value="100" selected>100 per page</option>
+                                    <option value="200">200 per page</option>
+                                    <option value="500">500 per page</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="pagination-control">
-                            <span class="pagination-info" id="paginationInfo">Showing 0-0 of 0</span>
-                            <button id="prevPage" class="btn-secondary" disabled>
-                                <i class="fas fa-chevron-left"></i>
-                            </button>
-                            <button id="nextPage" class="btn-secondary" disabled>
-                                <i class="fas fa-chevron-right"></i>
-                            </button>
-                            <select id="pageSize" class="form-control">
-                                <option value="50">50 per page</option>
-                                <option value="100" selected>100 per page</option>
-                                <option value="200">200 per page</option>
-                                <option value="500">500 per page</option>
-                            </select>
-                        </div>
+                        <button id="exportCSV" class="btn-secondary" disabled>
+                            <i class="fas fa-download"></i> CSV
+                        </button>
+                        <button id="exportJSON" class="btn-secondary" disabled>
+                            <i class="fas fa-download"></i> JSON
+                        </button>
+                        <button id="exportRDF" class="btn-secondary" disabled>
+                            <i class="fas fa-download"></i> RDF
+                        </button>
                     </div>
-                    <!-- Existing export buttons -->
-                    <button id="exportCSV" class="btn-secondary" disabled>
-                        <i class="fas fa-download"></i> CSV
-                    </button>
-                    <button id="exportJSON" class="btn-secondary" disabled>
-                        <i class="fas fa-download"></i> JSON
-                    </button>
-                	<button id="exportRDF" class="btn-secondary" disabled>
-    					<i class="fas fa-download"></i> RDF
-					</button>
                 </div>
-            </div>
-            
-            <div class="results-container">
-                <div id="resultsPlaceholder" class="results-placeholder">
-                    <i class="fas fa-search"></i>
-                    <p>Execute a query to see results</p>
+                
+                <div class="results-container">
+                    <div id="resultsPlaceholder" class="results-placeholder">
+                        <i class="fas fa-search"></i>
+                        <p>Execute a query to see results</p>
+                    </div>
+                    <div id="resultsTable" class="results-table hidden"></div>
+                    <div id="errorMessage" class="error-message hidden"></div>
+                    <div id="loadingSpinner" class="loading-spinner hidden">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Executing query...</p>
+                    </div>
                 </div>
-                <div id="resultsTable" class="results-table hidden"></div>
-                <div id="errorMessage" class="error-message hidden"></div>
-                <div id="loadingSpinner" class="loading-spinner hidden">
-                    <i class="fas fa-spinner fa-spin"></i>
-                    <p>Executing query...</p>
-                </div>
-            </div>
-        </section>
+            </section>
         </div>
 
-        <!-- Endpoint Configuration Modal -->
+        <div id="helpModal" class="modal hidden">
+            <div class="modal-content help-modal">
+                <div class="modal-header">
+                    <h3><i class="fas fa-question-circle"></i> SPARQL Query Help & Instructions</h3>
+                    <button class="btn-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="help-content">
+                        <div class="help-section">
+                            <h4>Getting Started</h4>
+                            <ol>
+                                <li><strong>Select a Dataset:</strong> Choose from available datasets in the Dataset section</li>
+                                <li><strong>Load Dataset:</strong> Click "Load Dataset" to configure the endpoint</li>
+                                <li><strong>Use Examples:</strong> Browse example queries for your selected dataset</li>
+                                <li><strong>Write Query:</strong> Use the query editor to write your SPARQL query</li>
+                                <li><strong>Execute:</strong> Click "Execute Query" or use Ctrl+Enter</li>
+                            </ol>
+                        </div>
+
+                        <div class="help-section">
+                            <h4>Query Guidelines</h4>
+                            <ul>
+                                <li><strong>FROM Clause:</strong> Must match the loaded dataset's Graph URI</li>
+                                <li><strong>Prefixes:</strong> Use the Prefixes button to insert common prefixes</li>
+                                <li><strong>Syntax:</strong> Ensure proper SPARQL syntax with correct brackets and semicolons</li>
+                            </ul>
+                        </div>
+
+                        <div class="help-section">
+                            <h4>Keyboard Shortcuts</h4>
+                            <ul>
+                                <li><kbd>Ctrl + Enter</kbd> - Execute query</li>
+                                <li><kbd>Ctrl + /</kbd> - Toggle comments (in query editor)</li>
+                            </ul>
+                        </div>
+
+                        <div class="help-section">
+                            <h4>Results Features</h4>
+                            <ul>
+                                <li><strong>Filtering:</strong> Use the filter input to search within results</li>
+                                <li><strong>Pagination:</strong> Navigate through large result sets</li>
+                                <li><strong>Export:</strong> Download results as CSV, JSON, or RDF</li>
+                                <li><strong>URI Links:</strong> Click on URIs to open them in new tabs</li>
+                            </ul>
+                        </div>
+
+                        <div class="help-section">
+                            <h4>Troubleshooting</h4>
+                            <ul>
+                                <li><strong>Query fails:</strong> Check syntax and FROM clause compatibility</li>
+                                <li><strong>No results:</strong> Verify dataset content and query conditions</li>
+                                <li><strong>Slow queries:</strong> Add LIMIT clauses and optimize filters</li>
+                                <li><strong>Connection issues:</strong> Verify endpoint URL and network connectivity</li>
+                            </ul>
+                        </div>
+
+                        <div class="help-section">
+                            <h4>Need More Help?</h4>
+                            <p>For additional assistance with SPARQL queries or dataset-specific questions, please contact the TALOS AI4SSH support team.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-primary close-help">Got it!</button>
+                </div>
+            </div>
+        </div>
+
         <div id="configModal" class="modal hidden">
             <div class="modal-content">
                 <div class="modal-header">
