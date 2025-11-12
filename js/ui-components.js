@@ -336,129 +336,122 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-PREFIX lac:  <https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/LACRIMALit-Modeling-Events-Classical-Period-v1>
+PREFIX lac:  <http://ontologia.fr/OTB/lac#>
 
 SELECT DISTINCT ?crisisName
-FROM <https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/LACRIMALit-Modeling-Events-Classical-Period-v1>
 WHERE {
-  ?crisis rdfs:subClassOf* lac:Political_Crisis .
-  ?crisis rdfs:label ?crisisName
+  ?crisis rdfs:subClassOf* lac:Political_Crisis.
+  ?crisis rdfs:label ?crisisName.
+  FILTER (lang(?crisisName) = 'en')
 }
 ORDER BY ?crisisName`
                     },
                     'query2': {
                         name: 'Where did the sedition of Corfu take place?',
-                        query: `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX owl: <http://www.w3.org/2002/07/owl#>
+                        query: `PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX owl:  <http://www.w3.org/2002/07/owl#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-PREFIX lac: <https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/LACRIMALit-Modeling-Events-Classical-Period-v1>
+PREFIX lac:  <http://ontologia.fr/OTB/lac#>
 
 SELECT DISTINCT ?locationName
+FROM <https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/LACRIMALit-Modeling-Events-Classical-Period-v1>
 WHERE {
-?sedition rdf:type lac:Sedition.
-?sedition rdfs:label ‘sedition of Corfu’@en.
-?sedition lac:location ?location.
-?location rdfs:label ?locationName
-FILTER (lang(?locationName)=‘en’) }`
+  ?sedition rdf:type lac:Sedition;
+            rdfs:label ?seditionLabel;
+            lac:location ?location.
+  ?location rdfs:label ?locationName.
+
+  # match label case-insensitively to avoid exact-case issues
+  FILTER(LANG(?locationName) = 'en')
+  FILTER(LANG(?seditionLabel) = 'en')
+  FILTER(LCASE(STR(?seditionLabel)) = LCASE("sedition of Corfu"))
+}`
                     },
                     'query3': {
                         name: 'Who are the protagonists of the sedition of Corfu?',
-                        query: `PREFIX rdf:
-<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX owl: <http://www.w3.org/2002/07/owl#>
-PREFIX rdfs:
-<http://www.w3.org/2000/01/rdf-schema#>
-PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-PREFIX skos:
-<http://www.w3.org/2004/02/skos/core#>
+                        query: `PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX owl:  <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-PREFIX lac: <http://ontologia.fr/OTB/lac#>
+PREFIX lac:  <http://ontologia.fr/OTB/lac#>
+
 SELECT DISTINCT ?protagonistName
+FROM <https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/LACRIMALit-Modeling-Events-Classical-Period-v1>
 WHERE {
-?sedition rdf:type lac:Sedition.
-?sedition rdfs:label ‘sedition of Corfu’@en.
-?sedition lac:agent ?protagonist.
-?protagonist rdfs:label ?protagonistName
-FILTER (lang(?protagonistName)=‘en’) }
+  ?sedition rdf:type lac:Sedition;
+            rdfs:label ?slabel;
+            lac:agent ?protagonist.
+  ?protagonist rdfs:label ?protagonistName.
+
+  FILTER(LANG(?slabel) = 'en')
+  FILTER(LANG(?protagonistName) = 'en')
+  FILTER(LCASE(STR(?slabel)) = LCASE("sedition of Corfu"))
+}
 ORDER BY ?protagonistName`
                     },
                     'query4': {
                         name: 'What are the relevant terms denoting crises (military, political etc.)?',
-                        query: `PREFIX rdf:
-<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX owl: <http://www.w3.org/2002/07/owl#>
-PREFIX rdfs:
-<http://www.w3.org/2000/01/rdf-schema#>
-PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-PREFIX skos:
-<http://www.w3.org/2004/02/skos/core#>
+                        query: `PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX owl:  <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-PREFIX lac: <http://ontologia.fr/OTB/lac#>
+PREFIX lac:  <http://ontologia.fr/OTB/lac#>
+
 SELECT DISTINCT ?term
 WHERE {
-?subClassOfCrisis rdfs:subClassOf* lac:Crisis.
-?subClassOfCrisis rdfs:label ?term.
-FILTER (lang(?term)=‘en’)
+  ?subClassOfCrisis rdfs:subClassOf* lac:Crisis;
+                    rdfs:label ?term.
+  FILTER (LANG(?term) = 'en')
 }
 ORDER BY ?term`
                     },
                     'query5': {
-                        name: 'What are the events that refer to the term “Athenians” in their Perseus reference?',
-                        query: `PREFIX rdf:
-<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX owl: <http://www.w3.org/2002/07/owl#>
-PREFIX rdfs:
-<http://www.w3.org/2000/01/rdf-schema#>
-PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-PREFIX skos:
-<http://www.w3.org/2004/02/skos/core#>
-PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-PREFIX lac: <http://ontologia.fr/OTB/lac#>
-SELECT DISTINCT ?eventName
-WHERE {
-?eventClass rdfs:subClassOf* lac:Event.
-?event rdf:type ?eventClass.
-?event rdfs:label ?eventName.
-?event lac:perseus_reference ?reference.
-FILTER regex (?reference, “Athenians”)
-FILTER (lang(?eventName)=‘en’)
-FILTER (lang(?reference)=‘en’)
-}
-ORDER BY ?eventName`
-                    },
-                    'query6': {
                         name: 'Who served the function of Prytan at the trial of the generals of the Arginusae battle?',
-                        query: `PREFIX rdf:
-<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX owl: <http://www.w3.org/2002/07/owl#>
-PREFIX rdfs:
-<http://www.w3.org/2000/01/rdf-schema#>
-PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-PREFIX skos:
-<http://www.w3.org/2004/02/skos/core#>
+                        query: `PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX owl:  <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-PREFIX lac: <http://ontologia.fr/OTB/lac#>
+PREFIX lac:  <http://ontologia.fr/OTB/lac#>
+
 SELECT DISTINCT ?whoName
-WHERE { ?evtTrial rdf:type lac:Trial.
-?evtTrial rdfs:label “trial of generals after the battle of
-Arginusae”@en.
-?evtTrial lac:beginDate ?beginDateTrial.
-?evtTrial lac:beginDate ?endDateTrial.
-?function rdf:type lac:Political_Function.
-?function rdfs:label “prytan”@en.
-?evtPerfFct rdf:type lac:Performed_Function.
-?evtPerfFct lac:function ?function.
-?who rdf:type lac:Person.
-?evtPerfFct lac:agent ?who.
-?who foaf:name ?whoName.
-?evtPerfFct lac:beginDate ?beginDateFunction.
-?evtPerfFct lac:beginDate ?endDateFunction.
-FILTER ((?beginDateTrial >= ?beginDateFunction) &&
-(?endDateTrial <= ?endDateFunction))
-} ORDER BY ?whoName`
+FROM <https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/LACRIMALit-Modeling-Events-Classical-Period-v1>
+WHERE {
+  ?evtTrial a lac:Trial ;
+            rdfs:label ?trialLabel ;
+            (lac:beginDate|lac:startDate) ?beginDateTrial ;
+            (lac:endDate|lac:finishDate)  ?endDateTrial .
+
+  FILTER ( LANG(?trialLabel) = 'en' )
+  FILTER ( CONTAINS(LCASE(STR(?trialLabel)),
+                    "trial of generals after the battle of arginusae") )
+
+  ?function a lac:Political_Function ;
+            rdfs:label ?funcLabel .
+  FILTER ( LANG(?funcLabel) = 'en' )
+  FILTER ( CONTAINS(LCASE(STR(?funcLabel)), "prytan") )
+
+  ?evtPerfFct a lac:Performed_Function ;
+              lac:function ?function ;
+              lac:agent ?who ;
+              (lac:beginDate|lac:startDate) ?beginDateFunction ;
+              (lac:endDate|lac:finishDate)  ?endDateFunction .
+
+  ?who foaf:name ?whoName .
+  FILTER ( LANG(?whoName) = 'en' )
+
+  FILTER ( ?beginDateTrial >= ?beginDateFunction &&
+           ?endDateTrial   <= ?endDateFunction )
+}
+ORDER BY ?whoName`
                     }
                 }
             },
