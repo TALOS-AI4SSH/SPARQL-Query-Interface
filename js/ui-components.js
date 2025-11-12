@@ -179,109 +179,348 @@ class UIComponents {
             'dataset1': {
                 name: 'Göbekli Tepe Ontoterminology (v1.0)',
                 description: 'Defines and represents the archaeological finds of T-Pillars in Göbekli Tepe, SE Turkey (-10000 to -8300 BCE) , in a machine-tractable way.',
-                graphUri: 'http://talos-ai4ssh.uoc.gr/graph/dataset1',
+                graphUri: 'https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/Modeling-Archaeological-Site-Gobekli-Tepe-v1',
                 endpoint: 'https://triplestore.talos-ai4ssh.uoc.gr/sparql/',
                 examples: {
-                    'basic_entities': {
-                        name: 'Basic Entities Overview',
-                        query: `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+                    'query1': {
+                        name: 'A list for the english terms and the definitions in natural language of the ontoterminology using OTV vocabulary.',
+                        query: `PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX otv:  <http://www.ontologia.fr/OTB/otv#>
 
-SELECT ?entity ?label ?type ?description
+SELECT ?termName ?definition
+FROM <https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/Modeling-Archaeological-Site-Gobekli-Tepe-v1>
 WHERE {
-  ?entity rdf:type ?type ;
-          rdfs:label ?label .
-  OPTIONAL { ?entity dct:description ?description }
+  ?concept rdf:type otv:Concept;
+           otv:denotedByTerm ?term.
+  ?term    otv:language        ?lg;
+           otv:termName        ?termName;
+           otv:termDefinition  ?definition.
+  FILTER (?lg = "en")
 }
-LIMIT 50`
-                    },
-                    'temporal_analysis': {
-                        name: 'Temporal Distribution',
-                        query: `PREFIX dct: <http://purl.org/dc/terms/>
-PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-
-SELECT ?year (COUNT(?item) as ?count)
-WHERE {
-  ?item dct:created ?date .
-  BIND(year(xsd:dateTime(?date)) as ?year)
-}
-GROUP BY ?year
-ORDER BY ?year`
+ORDER BY ?termName
+LIMIT 10
+`
                     }
                 }
             },
             'dataset2': {
                 name: 'ALyrA Ontoterminology (v1.0)',
                 description: 'A modelling of Archaic Lyric poets (799-430 BCΕ)',
-                graphUri: 'http://talos-ai4ssh.uoc.gr/graph/dataset2',
+                graphUri: 'https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/Ancient-Lyric-Poetry-ALyrA-v1',
                 endpoint: 'https://triplestore.talos-ai4ssh.uoc.gr/sparql/',
                 examples: {
-                    'recent_publications': {
-                        name: 'Recent Publications',
-                        query: `PREFIX dct: <http://purl.org/dc/terms/>
-PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+                    'query1': {
+                        name: 'What is an “hymn” and which Archaic Lyric poets/poetesses have composed “hymns”?',
+                        query: `PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX alyra: <http://www.ontologia.fr/OTB/ALyrA_v.1.0#>
+PREFIX otv: <http://www.ontologia.fr/OTB/otv#>
 
-SELECT ?title ?author ?date
-WHERE {
-  ?pub dct:title ?title ;
-       dct:creator ?author ;
-       dct:date ?date .
-  ?author foaf:name ?authorName .
+SELECT ?definition ?authorName ?centuryOfLiving 
+FROM <https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/Ancient-Lyric-Poetry-ALyrA-v1>
+WHERE {    
+    ?x rdfs:label "hymn"@en.
+    ?x skos:definition ?definition.
+          FILTER(langMatches(lang(?definition), "en"))
+    ?y otv:instanceOf ?x;
+          alyra:isWrittenBy ?author.
+    ?author rdfs:label ?authorName;
+            alyra:centuryOfLiving ?c.
+    ?c rdfs:label ?centuryOfLiving.
 }
-ORDER BY DESC(?date)
-LIMIT 20`
+ORDER BY ?centuryOfLiving`
+                    },
+                    'query2': {
+                        name: 'Who was Pindar?',
+                        query: `PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX alyra: <http://www.ontologia.fr/OTB/ALyrA_v.1.0#>
+
+SELECT ?propertyName ?value
+FROM <https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/Ancient-Lyric-Poetry-ALyrA-v1>
+WHERE {
+  	alyra:pindarus_boeotus ?x ?y .
+  	?x rdfs:label ?propertyName .
+  	?y rdfs:label ?value .
+  	FILTER(LANG(?value) = 'en')
+}
+ORDER BY ?value`
+                    },
+                    'query3': {
+                        name: 'Which is the four-digit "Thesaurus Linguae Graecae" identifying number of each Archaic Lyric composer?',
+                        query: `PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX alyra: <http://www.ontologia.fr/OTB/ALyrA_v.1.0#>
+PREFIX otv: <http://www.ontologia.fr/OTB/otv#>
+
+SELECT ?nameOfComposer ?tljNumber
+FROM <https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/Ancient-Lyric-Poetry-ALyrA-v1>
+
+WHERE {
+?x rdfs:subClassOf* alyra:Archaic_Lyric_Composer.
+?y otv:instanceOf* ?x.
+?y rdfs:label ?nameOfComposer;
+   	alyra:tlgIdentifyingNumber ?tljNumber}`
+                    },
+                    'query4': {
+                        name: 'Which are the What is the place where most Ancient Greek lyric composers were born and who were they?',
+                        query: `PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX otv: <http://www.ontologia.fr/OTB/otv#>
+PREFIX alyra: <http://www.ontologia.fr/OTB/ALyrA_v.1.0#>
+
+SELECT ?place ?coordinates ?poetLabel ?resourcePoet
+FROM <https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/Ancient-Lyric-Poetry-ALyrA-v1>
+
+WHERE {
+  {
+    SELECT ?place (COUNT(?y) AS ?count)
+    WHERE {
+      ?x rdfs:subClassOf* alyra:Archaic_Lyric_Composer.
+      ?y otv:instanceOf ?x.
+      ?y alyra:bornIn ?p.
+      ?p rdfs:label ?place.
+    }
+    GROUP BY ?place
+    ORDER BY DESC(?count)
+    LIMIT 1
+  }
+  ?x rdfs:subClassOf* alyra:Archaic_Lyric_Composer.
+  ?y otv:instanceOf ?x.
+  ?y alyra:bornIn ?p.
+  ?p rdfs:label ?place.
+  OPTIONAL { ?p alyra:pleiadesCoordinates ?coordinates. }
+  ?y rdfs:label ?poetLabel.
+  OPTIONAL {
+    SELECT ?y (SAMPLE(?resource) AS ?resourcePoet)
+    WHERE {
+      ?y rdfs:seeAlso ?resource.
+      FILTER(CONTAINS(LCASE(STR(?resource)), "perseus:author"))
+    }
+    GROUP BY ?y
+  }
+}
+ORDER BY ?poetLabel`
+                    },
+                    'query5': {
+                        name: 'Which are the different Archaic Lyric poems and what differentiates each of them?',
+                        query: `PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX alyra: <http://www.ontologia.fr/OTB/ALyrA_v.1.0#>
+PREFIX otv: <http://www.ontologia.fr/OTB/otv#>
+
+SELECT ?poems ?difference ?definition
+FROM <https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/Ancient-Lyric-Poetry-ALyrA-v1>
+WHERE {    
+       ?x rdfs:subClassOf* alyra:Archaic_Lyric_Poem;
+             rdfs:label ?poems;
+             otv:ownDifference ?y;
+	skos:definition ?definition.
+       ?y rdfs:label ?difference
+FILTER (lang(?poems) = 'en')
+FILTER (lang(?definition) = 'en')
+}`
                     }
                 }
             },
             'dataset3': {
                 name: 'LACRIMALit Ontology (v1.0)',
                 description: 'Representations of crisis events and their semantic relations, enabling structured exploration of ancient historiography.',
-                graphUri: 'http://talos-ai4ssh.uoc.gr/graph/dataset3',
+                graphUri: 'https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/LACRIMALit-Modeling-Events-Classical-Period-v1',
                 endpoint: 'https://triplestore.talos-ai4ssh.uoc.gr/sparql/',
                 examples: {
-                    'events_timeline': {
-                        name: 'Events Timeline',
-                        query: `PREFIX schema: <http://schema.org/>
-PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+                    'query1': {
+                        name: 'What are the different types of political crises?',
+                        query: `PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX owl:  <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX lac:  <https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/LACRIMALit-Modeling-Events-Classical-Period-v1>
 
-SELECT ?event ?name ?startDate ?location
+SELECT DISTINCT ?crisisName
+FROM <https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/LACRIMALit-Modeling-Events-Classical-Period-v1>
 WHERE {
-  ?event schema:name ?name ;
-         schema:startDate ?startDate .
-  OPTIONAL { ?event schema:location ?location }
+  ?crisis rdfs:subClassOf* lac:Political_Crisis .
+  ?crisis rdfs:label ?crisisName
 }
-ORDER BY ?startDate
-LIMIT 30`
+ORDER BY ?crisisName`
+                    },
+                    'query2': {
+                        name: 'Where did the sedition of Corfu take place?',
+                        query: `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX lac: <https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/LACRIMALit-Modeling-Events-Classical-Period-v1>
+
+SELECT DISTINCT ?locationName
+WHERE {
+?sedition rdf:type lac:Sedition.
+?sedition rdfs:label ‘sedition of Corfu’@en.
+?sedition lac:location ?location.
+?location rdfs:label ?locationName
+FILTER (lang(?locationName)=‘en’) }`
+                    },
+                    'query3': {
+                        name: 'Who are the protagonists of the sedition of Corfu?',
+                        query: `PREFIX rdf:
+<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs:
+<http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX skos:
+<http://www.w3.org/2004/02/skos/core#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX lac: <http://ontologia.fr/OTB/lac#>
+SELECT DISTINCT ?protagonistName
+WHERE {
+?sedition rdf:type lac:Sedition.
+?sedition rdfs:label ‘sedition of Corfu’@en.
+?sedition lac:agent ?protagonist.
+?protagonist rdfs:label ?protagonistName
+FILTER (lang(?protagonistName)=‘en’) }
+ORDER BY ?protagonistName`
+                    },
+                    'query4': {
+                        name: 'What are the relevant terms denoting crises (military, political etc.)?',
+                        query: `PREFIX rdf:
+<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs:
+<http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX skos:
+<http://www.w3.org/2004/02/skos/core#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX lac: <http://ontologia.fr/OTB/lac#>
+SELECT DISTINCT ?term
+WHERE {
+?subClassOfCrisis rdfs:subClassOf* lac:Crisis.
+?subClassOfCrisis rdfs:label ?term.
+FILTER (lang(?term)=‘en’)
+}
+ORDER BY ?term`
+                    },
+                    'query5': {
+                        name: 'What are the events that refer to the term “Athenians” in their Perseus reference?',
+                        query: `PREFIX rdf:
+<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs:
+<http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX skos:
+<http://www.w3.org/2004/02/skos/core#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX lac: <http://ontologia.fr/OTB/lac#>
+SELECT DISTINCT ?eventName
+WHERE {
+?eventClass rdfs:subClassOf* lac:Event.
+?event rdf:type ?eventClass.
+?event rdfs:label ?eventName.
+?event lac:perseus_reference ?reference.
+FILTER regex (?reference, “Athenians”)
+FILTER (lang(?eventName)=‘en’)
+FILTER (lang(?reference)=‘en’)
+}
+ORDER BY ?eventName`
+                    },
+                    'query6': {
+                        name: 'Who served the function of Prytan at the trial of the generals of the Arginusae battle?',
+                        query: `PREFIX rdf:
+<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs:
+<http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX skos:
+<http://www.w3.org/2004/02/skos/core#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX lac: <http://ontologia.fr/OTB/lac#>
+SELECT DISTINCT ?whoName
+WHERE { ?evtTrial rdf:type lac:Trial.
+?evtTrial rdfs:label “trial of generals after the battle of
+Arginusae”@en.
+?evtTrial lac:beginDate ?beginDateTrial.
+?evtTrial lac:beginDate ?endDateTrial.
+?function rdf:type lac:Political_Function.
+?function rdfs:label “prytan”@en.
+?evtPerfFct rdf:type lac:Performed_Function.
+?evtPerfFct lac:function ?function.
+?who rdf:type lac:Person.
+?evtPerfFct lac:agent ?who.
+?who foaf:name ?whoName.
+?evtPerfFct lac:beginDate ?beginDateFunction.
+?evtPerfFct lac:beginDate ?endDateFunction.
+FILTER ((?beginDateTrial >= ?beginDateFunction) &&
+(?endDateTrial <= ?endDateFunction))
+} ORDER BY ?whoName`
                     }
                 }
             },
             'dataset4': {
                 name: 'Ontoterminology of Hellenistic Events (v1.0)',
                 description: 'Version 1.0 of an ontoterminology that models events of the Hellenistic World (323–31 BC).',
-                graphUri: 'http://talos-ai4ssh.uoc.gr/graph/dataset4',
+                graphUri: 'https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/Modeling-Events-Hellenistic-Period-v1',
                 endpoint: 'https://triplestore.talos-ai4ssh.uoc.gr/sparql/',
                 examples: {
-                    'events_timeline': {
-                        name: 'Events Timeline',
-                        query: `PREFIX schema: <http://schema.org/>
-PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+                    'query1': {
+                        name: 'Who are the agents of the “Wars of the Successors”?',
+                        query: `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX events: <http://www.ontologia.fr/OTB/Events-hellenistic-v.1.0#>
+PREFIX otv: <http://www.ontologia.fr/OTB/otv#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 
-SELECT ?event ?name ?startDate ?location
+SELECT DISTINCT ?definition ?agentExLabel 
+FROM <https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/Modeling-Events-Hellenistic-Period-v1>
 WHERE {
-  ?event schema:name ?name ;
-         schema:startDate ?startDate .
-  OPTIONAL { ?event schema:location ?location }
+  ?warURI  rdfs:label "war"@en; 
+         skos:definition ?definition.
+  FILTER(langMatches(lang(?definition), "en"))
+  ?warEx rdfs:label "wars of the succesors"@en;
+         events:hasAgent ?agentEx.
+  ?agentEx rdfs:label ?agentExLabel.
 }
-ORDER BY ?startDate
-LIMIT 30`
+ORDER BY?agentExLabel`
+                    },
+                    'query2': {
+                        name: 'Who are the agents of the “Battle of Artaxata”, as well as the location and the sources?',
+                        query: `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX events: <http://www.ontologia.fr/OTB/Events-hellenistic-v.1.0#>
+PREFIX otv: <http://www.ontologia.fr/OTB/otv#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+
+SELECT DISTINCT ?definition ?agentExLabel ?locationExLabel 
+?sourceExLabel
+FROM <https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/Modeling-Events-Hellenistic-Period-v1>
+
+WHERE { 
+  ?battleURI    rdfs:label "battle"@en.
+  ?battleURI skos:definition ?definition.
+          FILTER(langMatches(lang(?definition), "en"))
+?battleEx rdfs:label "battle of artaxata" @en.
+?battleEx events:hasAgent ?agentEx.
+?agentEx rdfs:label ?agentExLabel.
+?battleEx events:hasLocation ?locationEx.
+?locationEx rdfs:label ?locationExLabel.
+?battleEx events:appearesInTheSourceOf ?sourceEx.
+?sourceEx rdfs:label ?sourceExLabel.
+}`
                     }
                 }
             },
             'dataset5': {
                 name: 'Ancient Greek and Chinese Philosophers Ontology (v1.0)',
                 description: 'Version 1.0 of an ontoterminology that models Ancient Greek philosophers, their philosophical production, and their spatial and temporal positioning.',
-                graphUri: 'https://triplestore.talos-ai4ssh.uoc.gr:8890/OpenDatasets/Philosophers_v1.rdf',
+                graphUri: 'https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/Ancient-Greek-Chinese-Philosophers-v1',
                 endpoint: 'https://triplestore.talos-ai4ssh.uoc.gr/sparql',
                 examples: {
                     'query1': {
@@ -292,7 +531,7 @@ PREFIX ont: <http://www.ontologia.fr/OTB/Philosophers#>
 PREFIX otv: <http://www.ontologia.fr/OTB/otv#>
 
 SELECT ?name ?school ?century
-FROM <https://triplestore.talos-ai4ssh.uoc.gr:8890/OpenDatasets/Philosophers_v1.rdf>
+FROM <https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/Ancient-Greek-Chinese-Philosophers-v1>
 
 WHERE {
   {?x otv:instanceOf ont:Ancient-Greek-Philosopher;
@@ -320,7 +559,7 @@ PREFIX ont: <http://www.ontologia.fr/OTB/Philosophers#>
 PREFIX otv: <http://www.ontologia.fr/OTB/otv#>
 
 SELECT ?name ?century ?mentionedByPhilosophicalWork
-FROM <http://ontologia.fr/OTB/Philosophers.rdf>
+FROM <https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/Ancient-Greek-Chinese-Philosophers-v1>
 
 WHERE {
   ?x otv:instanceOf ont:Ancient-Greek-Philosopher;
@@ -346,7 +585,7 @@ PREFIX ont: <http://www.ontologia.fr/OTB/Philosophers#>
 PREFIX otv: <http://www.ontologia.fr/OTB/otv#>
 
 SELECT ?OfPhilosophicalWork ?resources
-FROM <http://ontologia.fr/OTB/Philosophers.rdf>
+FROM <https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/Ancient-Greek-Chinese-Philosophers-v1>
 
 WHERE {
   ont:aristotle ont:authorOf ?y.
@@ -363,7 +602,7 @@ ORDER BY ?OfPhilosophicalWork`
 PREFIX otv: <http://www.ontologia.fr/OTB/otv#>
 
 SELECT ?PhilosophicalWork ?nameOfPhilosopher
-FROM <http://ontologia.fr/OTB/Philosophers.rdf>
+FROM <https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/Ancient-Greek-Chinese-Philosophers-v1>
 
 WHERE {
   ont:plato ont:authorOf ?y.
@@ -385,7 +624,7 @@ PREFIX ont: <http://www.ontologia.fr/OTB/Philosophers#>
 PREFIX otv: <http://www.ontologia.fr/OTB/otv#>
 
 SELECT ?name ?century ?mentionedByPhilosophicalWork
-FROM <http://ontologia.fr/OTB/Philosophers.rdf>
+FROM <https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/Ancient-Greek-Chinese-Philosophers-v1>
 
 WHERE {
   ?x otv:instanceOf ont:Ancient-Greek-Philosopher;
@@ -409,44 +648,24 @@ ORDER BY ?name`
             'dataset9': {
                 name: 'Ancient Oratory Ontology (v1.0)',
                 description: 'An ontoterminology (a terminology whose conceptual system is a formal ontology, Roche 2007) defining the primary legal proceedings in Classical Athenian courts (419–323 BC).',
-                graphUri: 'http://talos-ai4ssh.uoc.gr/graph/dataset9',
+                graphUri: 'https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/Ancient-Oratory-v1',
                 endpoint: 'https://triplestore.talos-ai4ssh.uoc.gr/sparql/',
                 examples: {
-                    'events_timeline': {
-                        name: 'Events Timeline',
-                        query: `PREFIX schema: <http://schema.org/>
-PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-
-SELECT ?event ?name ?startDate ?location
-WHERE {
-  ?event schema:name ?name ;
-         schema:startDate ?startDate .
-  OPTIONAL { ?event schema:location ?location }
-}
-ORDER BY ?startDate
-LIMIT 30`
+                    'query1': {
+                        name: '',
+                        query: ``
                     }
                 }
             },
             'dataset10': {
                 name: 'Ontology of Legal Bodies in Classical Athens (v1.0)',
                 description: 'An ontoterminology (a terminology whose conceptual system is a formal ontology, Roche 2007) defining the primary legal bodies in Classical Athenian courts (419–323 BC).',
-                graphUri: 'http://talos-ai4ssh.uoc.gr/graph/dataset10',
+                graphUri: 'https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/Legal-Bodies-Classical-Athens-v1',
                 endpoint: 'https://triplestore.talos-ai4ssh.uoc.gr/sparql/',
                 examples: {
-                    'events_timeline': {
-                        name: 'Events Timeline',
-                        query: `PREFIX schema: <http://schema.org/>
-PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-
-SELECT ?event ?name ?startDate ?location
-WHERE {
-  ?event schema:name ?name ;
-         schema:startDate ?startDate .
-  OPTIONAL { ?event schema:location ?location }
-}
-ORDER BY ?startDate
-LIMIT 30`
+                    'query1': {
+                        name: '',
+                        query: ``
                     }
                 }
             }

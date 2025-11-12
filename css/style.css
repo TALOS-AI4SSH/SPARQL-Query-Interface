@@ -5,7 +5,7 @@
 
     /* Accent & Warning: Richer, Golden Tones for highlights and alerts */
     --accent-color: #128458; /* A vibrant, deep gold/mustard yellow */
-    --success-color: #030303; /* A pale, cool green for contrast (easy to spot) */
+    --success-color: #155611; /* A pale, cool green for contrast (easy to spot) */
     
     /* Error: A noticeable, deep red */
     --warning-color: #FF5733; /* A bright, but still dark, orange-red */
@@ -574,7 +574,7 @@ tr:hover {
     }
 }
 .success-message {
-    color: var(--success-color);
+    color: #e1e5e2 !important;
     font-weight: bold;
     margin-top: 10px;
     padding: 5px;
