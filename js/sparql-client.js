@@ -1,11 +1,9 @@
 class SPARQLClient {
     constructor() {
-        this.endpoint = 'https://triplestore.talos-ai4ssh.uoc.gr/sparql/';
         this.defaultGraph = '';
     }
 
     async query(sparqlQuery, format = 'json') {
-        const url = new URL(this.endpoint);
         const params = {
             query: sparqlQuery,
             format: format
@@ -49,10 +47,6 @@ class SPARQLClient {
             'turtle': 'text/turtle'
         };
         return acceptHeaders[format] || 'application/sparql-results+json';
-    }
-
-    setEndpoint(url) {
-        this.endpoint = url;
     }
 
     async queryWithPagination(sparqlQuery, limit = 10000, offset = 0) {
