@@ -1,9 +1,10 @@
 class UIComponents {
     constructor() {
-        this.sparqlClient = new SPARQLClient();
+        // this.sparqlClient = new SPARQLClient();
         this.currentResults = null;
         this.selectedDataset = null;
         this.datasets = this.getDatasetsConfig();
+        this.sparqlClient = new SPARQLClient('https://triplestore.talos-ai4ssh.uoc.gr:8890/sparql');
         
         // Pagination and filtering state
         this.currentPage = 1;
@@ -180,6 +181,7 @@ class UIComponents {
                 name: 'Göbekli Tepe Ontoterminology (v1.0)',
                 description: 'Defines and represents the archaeological finds of T-Pillars in Göbekli Tepe, SE Turkey (-10000 to -8300 BCE) , in a machine-tractable way.',
                 graphUri: 'https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/Modeling-Archaeological-Site-Gobekli-Tepe-v1',
+                endpoint: 'https://triplestore.talos-ai4ssh.uoc.gr/sparql/',
                 examples: {
                     'query1': {
                         name: 'A list for the english terms and the definitions in natural language of the ontoterminology using OTV vocabulary.',
@@ -208,6 +210,7 @@ LIMIT 10
                 name: 'ALyrA Ontoterminology (v1.0)',
                 description: 'A modelling of Archaic Lyric poets (799-430 BCΕ)',
                 graphUri: 'https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/Ancient-Lyric-Poetry-ALyrA-v1',
+                endpoint: 'https://triplestore.talos-ai4ssh.uoc.gr/sparql/',
                 examples: {
                     'query1': {
                         name: 'What is an “hymn” and which Archaic Lyric poets/poetesses have composed “hymns”?',
@@ -324,6 +327,7 @@ FILTER (lang(?definition) = 'en')
                 name: 'LACRIMALit Ontology (v1.0)',
                 description: 'Representations of crisis events and their semantic relations, enabling structured exploration of ancient historiography.',
                 graphUri: 'https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/LACRIMALit-Modeling-Events-Classical-Period-v1',
+                endpoint: 'https://triplestore.talos-ai4ssh.uoc.gr/sparql/',
                 examples: {
                     'query1': {
                         name: 'What are the different types of political crises?',
@@ -456,6 +460,7 @@ ORDER BY ?whoName`
                 name: 'Ontoterminology of Hellenistic Events (v1.0)',
                 description: 'Version 1.0 of an ontoterminology that models events of the Hellenistic World (323–31 BC).',
                 graphUri: 'https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/Modeling-Events-Hellenistic-Period-v1',
+                endpoint: 'https://triplestore.talos-ai4ssh.uoc.gr/sparql/',
                 examples: {
                     'query1': {
                         name: 'Who are the agents of the “Wars of the Successors”?',
@@ -510,6 +515,7 @@ WHERE {
                 name: 'Ancient Greek and Chinese Philosophers Ontology (v1.0)',
                 description: 'Version 1.0 of an ontoterminology that models Ancient Greek philosophers, their philosophical production, and their spatial and temporal positioning.',
                 graphUri: 'https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/Ancient-Greek-Chinese-Philosophers-v1',
+                endpoint: 'https://triplestore.talos-ai4ssh.uoc.gr/sparql/',
                 examples: {
                     'query1': {
                         name: 'Which ancient Greek philosophers were born or stayed in Athens?',
@@ -637,6 +643,7 @@ ORDER BY ?name`
                 name: 'Ancient Oratory Ontology (v1.0)',
                 description: 'An ontoterminology (a terminology whose conceptual system is a formal ontology, Roche 2007) defining the primary legal proceedings in Classical Athenian courts (419–323 BC).',
                 graphUri: 'https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/Ancient-Oratory-v1',
+                endpoint: 'https://triplestore.talos-ai4ssh.uoc.gr/sparql/',
                 examples: {
                     'query1': {
                         name: '',
@@ -648,6 +655,7 @@ ORDER BY ?name`
                 name: 'Ontology of Legal Bodies in Classical Athens (v1.0)',
                 description: 'An ontoterminology (a terminology whose conceptual system is a formal ontology, Roche 2007) defining the primary legal bodies in Classical Athenian courts (419–323 BC).',
                 graphUri: 'https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/Legal-Bodies-Classical-Athens-v1',
+                endpoint: 'https://triplestore.talos-ai4ssh.uoc.gr/sparql/',
                 examples: {
                     'query1': {
                         name: '',
@@ -710,6 +718,7 @@ ORDER BY ?name`
         this.selectedDataset = this.datasets[datasetId];
         
         // Update SPARQL client configuration
+        this.sparqlClient.setEndpoint(this.selectedDataset.endpoint);
         this.sparqlClient.setDefaultGraph(this.selectedDataset.graphUri);
         
         // Enable examples section

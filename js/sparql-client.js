@@ -1,9 +1,11 @@
 class SPARQLClient {
     constructor() {
+        this.endpoint = 'https://triplestore.talos-ai4ssh.uoc.gr/sparql/';
         this.defaultGraph = '';
     }
 
     async query(sparqlQuery, format = 'json') {
+        const url = new URL(this.endpoint);
         const params = {
             query: sparqlQuery,
             format: format
@@ -36,6 +38,10 @@ class SPARQLClient {
             console.error('SPARQL query error:', error);
             throw error;
         }
+    }
+
+        setEndpoint(url) {
+        this.endpoint = url;
     }
 
     getAcceptHeader(format) {
