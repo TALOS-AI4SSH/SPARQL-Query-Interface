@@ -812,3 +812,32 @@ tr:hover {
 .help-modal .modal-body::-webkit-scrollbar-thumb:hover {
     background: var(--primary-color);
 }
+
+/* Footer */
+.app-footer {
+    width: 100%;
+    text-align: center;
+    padding: 1rem 0;
+    margin-top: 2rem;
+
+    color: #34648f;
+
+    font-size: 0.9rem;
+    letter-spacing: 0.03em;
+}
+
+.app-footer p {
+    margin: 0;
+    opacity: 0.85;
+}
+
+.app-footer a {
+    color: #34648f;
+    text-decoration: none;
+    font-weight: 500;
+    transition: opacity 0.2s ease;
+}
+
+.app-footer a:hover {
+    opacity: 0.7;
+}
