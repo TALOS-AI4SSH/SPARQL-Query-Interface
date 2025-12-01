@@ -646,8 +646,69 @@ ORDER BY ?name`
                 endpoint: 'https://triplestore.talos-ai4ssh.uoc.gr/sparql/',
                 examples: {
                     'query1': {
-                        name: '',
-                        query: ``
+                        name: 'What are the ancient Greek terms in the dataset and their definitions?',
+                        query: `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX otv: <http://www.ontologia.fr/OTB/otv#>
+
+SELECT ?termName ?def
+
+WHERE { ?subject rdf:type otv:Concept.
+?subject otv:denotedByTerm ?term.
+?term otv:termName ?termName.
+?term otv:termDefinition ?def.
+ ?term otv:language ?lg.
+FILTER (?lg="grc")
+}
+ORDER BY ?termName`
+                    },
+                    'query2': {
+                        name: 'What is the definition of a specific term (i.e. “δίκη”)?',
+                        query: `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX otv: <http://www.ontologia.fr/OTB/otv#>
+
+SELECT ?termName ?def
+
+WHERE { ?subject rdf:type otv:Concept.
+?subject otv:denotedByTerm ?term.
+?term otv:termName "δίκη" .
+?term otv:termName ?termName .
+?term otv:termDefinition ?def.
+}`
+                    },
+                    'query3': {
+                        name: 'What is the difference between a public and private lawsuit?',
+                        query: `PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX otv: <http://www.ontologia.fr/OTB/otv#>
+
+SELECT distinct ?diff1Name ?diff2Name
+
+WHERE {?cpt1 rdfs:label "private lawsuits"@en.
+?cpt1 otv:difference ?diff1.
+?diff1 rdfs:label ?diff1Name.
+?cpt2 rdfs:label "public lawsuits"@en.
+?cpt2 otv:difference ?diff2.
+?diff2 rdfs:label ?diff2Name.
+?diff1 otv:belongsToAxis ?axis
+FILTER NOT EXISTS {?cpt2 otv:difference ?diff1}
+FILTER EXISTS {?diff2 otv:belongsToAxis ?axis}
+}`
+                    },
+                    'query4': {
+                        name: 'Which legal proceedings were supervised by the Thesmothetai?',
+                        query: `PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX otv: <http://www.ontologia.fr/OTB/otv#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+SELECT distinct ?termName ?diff1Name ?definition
+
+WHERE {?cpt1 rdfs:label ?termName.
+?cpt1 otv:difference ?diff1.
+?cpt1 skos:definition ?definition.
+?diff1 rdfs:label "thesmothetae".
+?diff1 rdfs:label ?diff1Name.
+FILTER (lang(?termName) = 'grc')
+FILTER (lang(?definition) = 'en')
+}`
                     }
                 }
             },
@@ -658,9 +719,74 @@ ORDER BY ?name`
                 endpoint: 'https://triplestore.talos-ai4ssh.uoc.gr/sparql/',
                 examples: {
                     'query1': {
-                        name: '',
-                        query: ``
-                    }
+                        name: 'What are the terms in ancient Greek and their definitions:',
+                        query: `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX otv: <http://www.ontologia.fr/OTB/otv#>
+
+SELECT ?termName ?def
+
+WHERE { ?subject rdf:type otv:Concept.
+?subject otv:denotedByTerm ?term.
+?term otv:termName ?termName.
+?term otv:termDefinition ?def.
+?term otv:language ?lg.
+FILTER (?lg="grc")
+}
+ORDER BY ?termName`
+                    },
+                    'query2': {
+                        name: 'What is the supervising jurisdiction of the "πολέμαρχος"?',
+                        query: `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX otv: <http://www.ontologia.fr/OTB/otv#>
+
+SELECT ?termName ?diffName
+WHERE { ?subject rdf:type otv:Concept.
+?subject otv:denotedByTerm ?term.
+?term otv:termName "πολέμαρχος".
+?term otv:termName ?termName.
+?term otv:language ?lg.
+?subject otv:ownDifference ?diff.
+?axis rdf:type otv:AxisOfAnalysis.
+?axis rdfs:label "Legal Jurisdiction".
+?axis otv:containsDifference ?diff.
+?diff rdfs:label ?diffName.
+
+FILTER (?lg="grc")
+}`
+                    },
+                    'query3': {
+                        name: 'What are the sizes of each legal body?',
+                        query: `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX otv: <http://www.ontologia.fr/OTB/otv#>
+
+SELECT ?termName ?diffName
+WHERE { ?subject rdf:type otv:Concept.
+?subject otv:denotedByTerm ?term.
+?term otv:termName ?termName.
+?term otv:language ?lg.
+?subject otv:ownDifference ?diff.
+?axis rdf:type otv:AxisOfAnalysis.
+?axis rdfs:label "Size".
+?axis otv:containsDifference ?diff.
+?diff rdfs:label ?diffName.
+
+FILTER (?lg="grc")
+}`
+                    },
+                    'query4': {
+                        name: 'What is the definition of a specific term (i.e. "δικαστήριον")?',
+                        query: `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX otv: <http://www.ontologia.fr/OTB/otv#>
+
+SELECT ?termName ?def
+
+WHERE { ?subject rdf:type otv:Concept.
+?subject otv:denotedByTerm ?term.
+?term otv:termName "δικαστήριον" .
+?term otv:termName ?termName .
+?term otv:termDefinition ?def.
+}`
+                    },
                 }
             }
         };
