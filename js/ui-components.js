@@ -40,10 +40,18 @@ class UIComponents {
         document.getElementById('prefixesBtn').addEventListener('click', () => this.showPrefixesModal());
         
         // Dataset and example buttons
-        document.getElementById('datasetSelect').addEventListener('change', (e) => this.onDatasetSelect(e));
-        document.getElementById('loadDataset').addEventListener('click', () => this.loadSelectedDataset());
-        document.getElementById('exampleSelect').addEventListener('change', (e) => this.onExampleSelect(e));
-        document.getElementById('loadExample').addEventListener('click', () => this.loadSelectedExample());
+        document.getElementById('datasetSelect')
+        .addEventListener('change', (e) => {
+            this.onDatasetSelect(e);
+            this.loadSelectedDataset();   // Auto-Load Dataset
+        });
+
+        document.getElementById('exampleSelect')
+        .addEventListener('change', (e) => {
+            this.onExampleSelect(e);
+            this.loadSelectedExample();   //Auto-Load Query
+        });
+
 
         // Pagination and filtering events
         document.getElementById('prevPage').addEventListener('click', () => this.previousPage());
@@ -809,14 +817,28 @@ WHERE { ?subject rdf:type otv:Concept.
 
     onDatasetSelect(event) {
         const datasetId = event.target.value;
-        const loadBtn = document.getElementById('loadDataset');
-        
-        if (datasetId) {
-            loadBtn.disabled = false;
-            this.showDatasetInfo(datasetId);
-        } else {
-            loadBtn.disabled = true;
+
+        if (!datasetId) {
+            this.selectedDataset = null;
             this.hideDatasetInfo();
+            return;
+        }
+
+        // set selected dataset
+        this.selectedDataset = this.datasets[datasetId];
+
+        // show dataset info
+        this.showDatasetInfo(datasetId);
+
+        // reset examples & editor
+        const exampleSelect = document.getElementById('exampleSelect');
+        if (exampleSelect) {
+            exampleSelect.value = '';
+        }
+
+        const editor = document.getElementById('queryEditor');
+        if (editor) {
+            editor.value = '';
         }
     }
 
@@ -877,14 +899,14 @@ WHERE { ?subject rdf:type otv:Concept.
 
     populateExamplesSelect(datasetId) {
         const select = document.getElementById('exampleSelect');
-        const loadBtn = document.getElementById('loadExample');
-        if (!select || !loadBtn) return;
-        
+        if (!select) return;
+
         select.innerHTML = '<option value="">-- Select an example query --</option>';
         select.disabled = false;
-        loadBtn.disabled = true;
-        
+
         const dataset = this.datasets[datasetId];
+        if (!dataset || !dataset.examples) return;
+
         Object.keys(dataset.examples).forEach(exampleId => {
             const example = dataset.examples[exampleId];
             const option = document.createElement('option');
@@ -895,9 +917,6 @@ WHERE { ?subject rdf:type otv:Concept.
     }
 
     onExampleSelect(event) {
-        const exampleId = event.target.value;
-        const loadBtn = document.getElementById('loadExample');
-        if (loadBtn) loadBtn.disabled = !exampleId;
     }
 
     loadSelectedExample() {
