@@ -11,7 +11,7 @@
   <img src="https://img.shields.io/badge/build-none%20required-brightgreen.svg" alt="No build required">
 </p>
 
-The **TALOS SPARQL Query Interface** is a browser-based application for exploring and querying the knowledge graphs of the [TALOS AI4SSH Lab](https://talos-ai4ssh.uoc.gr/) using SPARQL.
+The **TALOS SPARQL Query Interface** is a browser-based application for exploring and querying the knowledge graphs of the [TALOS AI4SSH Lab](https://www.talos-lab.eu/) using SPARQL.
 
 The interface is designed to make TALOS research data accessible to researchers in **Digital Humanities**, the **Semantic Web**, and **AI for the Social Sciences and Humanities (AI4SSH)**, including researchers who are new to SPARQL. Each configured dataset includes a description and a collection of example queries, while query results can be inspected, filtered, paginated, and exported.
 
@@ -129,7 +129,7 @@ The application follows a **modular, client-side architecture** and is split int
 
 ## Help
 
-To ask a question, report a problem, or suggest an improvement, please open an issue in this repository or contact the [TALOS AI4SSH Lab](https://talos-ai4ssh.uoc.gr/). Bug reports are very welcome.
+To ask a question, report a problem, or suggest an improvement, please open an issue in this repository or contact the [TALOS AI4SSH Lab](https://www.talos-lab.eu/). Bug reports are very welcome.
 
 ---
 
@@ -147,4 +147,4 @@ Contributions are welcome. Unless you explicitly state otherwise, any contributi
 
 ## Developer
 
-Developed by **Maria Schoinaki** for the [TALOS AI4SSH Lab](https://talos-ai4ssh.uoc.gr/).
+Developed by **[Maria Schoinaki](https://github.com/MariaSchoinaki)** for the [TALOS AI4SSH Lab](https://www.talos-lab.eu/).
