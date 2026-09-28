@@ -11,51 +11,58 @@
   <img src="https://img.shields.io/badge/build-none%20required-brightgreen.svg" alt="No build required">
 </p>
 
-The TALOS SPARQL Query Interface is a web application for exploring the knowledge graphs of the [TALOS AI4SSH Lab](https://talos-ai4ssh.uoc.gr/) with **SPARQL queries**.
+The **TALOS SPARQL Query Interface** is a browser-based application for exploring and querying the knowledge graphs of the [TALOS AI4SSH Lab](https://talos-ai4ssh.uoc.gr/) using SPARQL.
 
-Its goal is to make TALOS research data accessible to researchers in **Digital Humanities**, **Semantic Web**, and **AI4SSH**, including those who are new to SPARQL. Each dataset comes with a description and ready-made example queries, and results can be filtered, browsed, and exported.
+The interface is designed to make TALOS research data accessible to researchers in **Digital Humanities**, the **Semantic Web**, and **AI for the Social Sciences and Humanities (AI4SSH)**, including researchers who are new to SPARQL. Each configured dataset includes a description and a collection of example queries, while query results can be inspected, filtered, paginated, and exported.
 
-The application is written in plain HTML, CSS, and JavaScript. It has no dependencies and needs no build step.
+The application is implemented in plain HTML, CSS, and JavaScript and does not require a frontend framework or build step.
 
 ---
 
 ## Datasets
 
-The interface currently provides access to the following TALOS knowledge graphs:
+The interface currently provides access to seven TALOS knowledge graphs:
 
-- **Göbekli Tepe Ontoterminology (v1.0)**: the archaeological finds of T-Pillars in Göbekli Tepe, SE Turkey (10000 to 8300 BCE).
-- **ALyrA Ontoterminology (v1.0)**: Archaic Lyric poets (799 to 430 BCE).
+- **Göbekli Tepe Ontoterminology (v1.0)**: archaeological finds associated with the T-Pillars of Göbekli Tepe, southeastern Turkey (ca. 10,000–8,300 BCE).
+- **ALyrA Ontoterminology (v1.0)**: Archaic Lyric poets and poetry (799–430 BCE).
 - **LACRIMALit Ontology (v1.0)**: crisis events and their semantic relations in ancient historiography.
-- **Ontoterminology of Hellenistic Events (v1.0)**: events of the Hellenistic world (323 to 31 BC).
-- **Ancient Greek and Chinese Philosophers Ontology (v1.0)**: philosophers, their works, and their place in space and time.
-- **Ancient Oratory Ontology (v1.0)**: the primary legal proceedings in Classical Athenian courts (419 to 323 BC).
-- **Ontology of Legal Bodies in Classical Athens (v1.0)**: the primary legal bodies in Classical Athenian courts (419 to 323 BC).
+- **Ontoterminology of Hellenistic Events (v1.0)**: historical events of the Hellenistic world.
+- **Ancient Greek and Chinese Philosophers Ontology (v1.0)**: Ancient Greek philosophers, their philosophical production, and their spatial and temporal positioning.
+- **Ancient Oratory Ontology (v1.0)**: primary legal proceedings in Classical Athenian courts (419–323 BCE).
+- **Ontology of Legal Bodies in Classical Athens (v1.0)**: primary legal bodies in Classical Athenian courts (419–323 BCE).
 
 ---
 
 ## Features
 
-- **Interactive SPARQL editor**
-- **Dataset selection & metadata preview**
-- **Predefined example queries per dataset**
-- **Prefix management modal**
-- **Result pagination & filtering**
-- **Export results** to CSV, JSON, and RDF
-- **Light / Dark theme toggle**
+- **Interactive SPARQL query editor**
+- **Dataset selection and metadata preview**
+- **Dataset-specific example queries**
+- **SPARQL prefix management**
+- **Dataset-aware graph-scope checking**
+- **Result pagination and client-side filtering**
+- **CSV, JSON, and RDF export**
+- **Light and dark themes**
 - **Keyboard shortcuts**
-- **Built-in Help & Instructions modal**
+- **Built-in Help and Instructions modal**
+
+### Dataset-aware graph-scope checking
+
+When a dataset is selected, its named graph is configured as the default graph for query execution.
+
+If a query contains an explicit `FROM <graphURI>` clause, the interface checks it against the graph URI of the selected dataset before execution. A detected mismatch stops execution and displays an explanatory message. Queries without an explicit `FROM` clause use the selected dataset as the default graph.
+
+This is a lightweight consistency check intended to reduce accidental graph-selection errors; it is not an access-control mechanism or a complete SPARQL parser.
 
 ---
 
 ## Getting Started
 
-The app only needs to be served from a web server rather than opened directly as a file.
+The application is static and can be served using any standard web server.
 
 ### Folder structure
 
-The files must be arranged like this, because `index.html` loads them from these folders:
-
-```
+```text
 ├── index.html
 ├── css/
 │   └── style.css
