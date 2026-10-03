@@ -1,0 +1,5 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX otv: <http://www.ontologia.fr/OTB/otv#>
+SELECT ?termName (COUNT(DISTINCT ?term) AS ?numberOfTerms) FROM <https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/Modeling-Archaeological-Site-Gobekli-Tepe-v1> WHERE { ?concept rdf:type otv:Concept ; otv:denotedByTerm ?term . ?term otv:termName ?termName . } GROUP BY ?termName HAVING(COUNT(DISTINCT ?term)>1)
