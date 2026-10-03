@@ -1,0 +1,5 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX lac: <http://ontologia.fr/OTB/lac#>
+SELECT ?c (COUNT(DISTINCT ?label) AS ?n) FROM <https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/LACRIMALit-Modeling-Events-Classical-Period-v1> WHERE { ?c rdfs:subClassOf* lac:Crisis ; rdfs:label ?label . FILTER(?c != lac:Crisis) FILTER(LANG(?label)="en") } GROUP BY ?c HAVING(COUNT(DISTINCT ?label)>1)
