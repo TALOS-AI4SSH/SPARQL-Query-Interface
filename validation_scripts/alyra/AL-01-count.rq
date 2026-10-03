@@ -1,0 +1,4 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX otv: <http://www.ontologia.fr/OTB/otv#>
+PREFIX alyra: <http://www.ontologia.fr/OTB/ALyrA_v.1.0#>
+SELECT (COUNT(DISTINCT ?composer) AS ?numberOfComposers) FROM <https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/Ancient-Lyric-Poetry-ALyrA-v1> WHERE { ?class rdfs:subClassOf* alyra:Archaic_Lyric_Composer . ?composer otv:instanceOf* ?class . }
