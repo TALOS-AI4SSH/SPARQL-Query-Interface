@@ -1,0 +1,3 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX events: <http://www.ontologia.fr/OTB/Events-hellenistic-v.1.0#>
+SELECT DISTINCT ?event FROM <https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/Modeling-Events-Hellenistic-Period-v1> WHERE { ?event rdfs:label ?label . FILTER(STRSTARTS(STR(?event),"http://www.ontologia.fr/OTB/Events-hellenistic-v.1.0#")) FILTER(LANG(?label)="en") FILTER NOT EXISTS { ?event events:hasLocation ?x . } }
