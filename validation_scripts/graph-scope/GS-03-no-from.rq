@@ -1,0 +1,2 @@
+# Run while Göbekli Tepe is selected.
+SELECT ?s ?p ?o WHERE { ?s ?p ?o } LIMIT 1

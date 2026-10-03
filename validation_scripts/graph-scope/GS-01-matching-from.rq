@@ -1,0 +1,1 @@
+SELECT ?s ?p ?o FROM <https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/Modeling-Archaeological-Site-Gobekli-Tepe-v1> WHERE { ?s ?p ?o } LIMIT 1

@@ -1,0 +1,2 @@
+# Run while Göbekli Tepe is selected.
+SELECT ?s ?p ?o FROM <https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/Ancient-Lyric-Poetry-ALyrA-v1> WHERE { ?s ?p ?o } LIMIT 1
