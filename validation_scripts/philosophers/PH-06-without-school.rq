@@ -1,0 +1,4 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX ont: <http://www.ontologia.fr/OTB/Philosophers#>
+PREFIX otv: <http://www.ontologia.fr/OTB/otv#>
+SELECT DISTINCT ?philosopher FROM <https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/Ancient-Greek-Chinese-Philosophers-v1> WHERE { ?philosopher otv:instanceOf ont:Ancient-Greek-Philosopher . FILTER NOT EXISTS { ?philosopher ont:memberOfPhilosophicalSchool ?x . } }
