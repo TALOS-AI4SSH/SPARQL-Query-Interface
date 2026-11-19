@@ -647,6 +647,68 @@ ORDER BY ?name`
                     }
                 }
             },
+
+            'dataset11': {
+    name: 'Ancient Greek and Chinese Philosophers Ontology (v2.0)',
+    description: 'Models Ancient Greek and Chinese philosophers, their philosophical works, schools, places and periods.',
+    graphUri: 'https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/Ancient-Greek-Chinese-Philosophers-v2',
+    endpoint: 'https://triplestore.talos-ai4ssh.uoc.gr/sparql/',
+    examples: {
+        'query1': {
+            name: 'Greek and Chinese philosophers by school in the 4th century BCE',
+            query: `PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX ont: <http://www.ontologia.fr/OTB/philosopher#>
+PREFIX otv: <http://www.ontologia.fr/OTB/otv#>
+
+SELECT ?tradition ?school
+       (COUNT(DISTINCT ?p) AS ?philosophers)
+FROM <https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/Ancient-Greek-Chinese-Philosophers-v2>
+WHERE {
+  VALUES (?tradition ?class) {
+    ("Greek" ont:Ancient-Greek-Philosopher)
+    ("Chinese" ont:Ancient-Chinese-Philosopher)
+  }
+
+  ?p otv:instanceOf ?class ;
+     ont:livedInPeriod ont:4th_century_BCE ;
+     (ont:memberOfSchool|ont:representativeOf) ?s .
+
+  ?s rdfs:label ?school .
+
+  FILTER (LANG(?school) = "en")
+}
+GROUP BY ?tradition ?s ?school
+ORDER BY ?tradition ?school`
+        },
+
+        'query2': {
+            name: 'Which Ancient Greek philosophers authored works titled "On Nature", and in which periods did they live?',
+            query: `PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX ont: <http://www.ontologia.fr/OTB/philosopher#>
+PREFIX otv: <http://www.ontologia.fr/OTB/otv#>
+
+SELECT ?philosopher ?work
+       (GROUP_CONCAT(DISTINCT ?period; separator=", ") AS ?periods)
+FROM <https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/Ancient-Greek-Chinese-Philosophers-v2>
+WHERE {
+  ?p otv:instanceOf ont:Ancient-Greek-Philosopher ;
+     ont:authorOf ?w ;
+     ont:livedInPeriod ?per ;
+     rdfs:label ?philosopher .
+
+  ?w rdfs:label ?work .
+  ?per rdfs:label ?period .
+
+  FILTER (LANG(?philosopher) = "en")
+  FILTER (LANG(?work) = "en")
+  FILTER (LANG(?period) = "en")
+  FILTER (REGEX(STR(?work), "^on_nature", "i"))
+}
+GROUP BY ?p ?philosopher ?w ?work
+ORDER BY ?philosopher`
+        }
+    }
+},
             'dataset9': {
                 name: 'Ancient Oratory Ontology (v1.0)',
                 description: 'An ontoterminology (a terminology whose conceptual system is a formal ontology, Roche 2007) defining the primary legal proceedings in Classical Athenian courts (419–323 BC).',
