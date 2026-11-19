@@ -1,0 +1,6 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX ont: <http://www.ontologia.fr/OTB/philosopher#>
+PREFIX otv: <http://www.ontologia.fr/OTB/otv#>
+SELECT (COUNT(DISTINCT ?philosopher) AS ?numberOfPhilosophers)
+FROM <https://triplestore.talos-ai4ssh.uoc.gr:8890/datasets/Ancient-Greek-Chinese-Philosophers-v2>
+WHERE { ?philosopher otv:instanceOf <http://www.ontologia.fr/OTB/Philosophers#Ancient-Greek-Philosopher> . }
